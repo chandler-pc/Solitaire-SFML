@@ -234,7 +234,7 @@ void mostrarPila(int a, char t) {
         if (t == 'j') {
             //Imprime las cartas que no están en el tope
             for (int i = 0; i < asteriscos[a]; i++) {
-                cout << "[**]";
+                //cout << "[**]";
                 card.setPosition(sf::Vector2f(60 + 100 * a, 150 + 80 * i));
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Black);
@@ -243,7 +243,9 @@ void mostrarPila(int a, char t) {
                 pointer = pointer->siguiente;
             }
             //Imprime la carta del tope y las cartas que se han movido
-            while (count != (longitud(a) - asteriscos[a])) {
+            int tempLong = longitud(a) - asteriscos[a];
+            //int tempMinus = 
+            while (count != tempLong) {
                 count++;
                 char x = pointer->carta.Palo;
                 int n = pointer->carta.Ncarta;
@@ -256,7 +258,7 @@ void mostrarPila(int a, char t) {
                 card.setTexture(&TempCard);
                 card.setPosition(sf::Vector2f(60 + 100 * a, 150 + 80 * (longitud(a) - 1)));
                 numeroCarta.setString(to_string(n));
-                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 150 + 80 * (longitud(a) - 1)));
+                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 150 + 80 * (longitud(a)-1)));
                 char cartColor = C[pointer->carta.color];
                 if (cartColor == 'N') {
                     numeroCarta.setFillColor(sf::Color::Black);
@@ -266,10 +268,10 @@ void mostrarPila(int a, char t) {
                 }
                 window.draw(card);
                 window.draw(numeroCarta);
-                cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
+                //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
                 pointer = pointer->siguiente;
             }
-            cout << endl;
+            //cout << endl;
         }
         if (t == 's') {
             char x = pointer->carta.Palo;
@@ -293,31 +295,31 @@ void mostrarPila(int a, char t) {
         }
     }
     else {
-        cout << endl;
+        //cout << endl;
     }
 }
 
 void mostrarPilas() {
     //Función para mostrar todas las pilas
     //Muestra las pilas del 1 al 7
-    cout << "Pilas de juego: " << endl;
+    //cout << "Pilas de juego: " << endl;
     for (int i = 0; i < 7; i++) {
-        cout << "Pila " << i + 1 << ": ";
+        //cout << "Pila " << i + 1 << ": ";
         mostrarPila(i,'j');
     }
     //Muestra las pilas del 8 al 11
-    cout << "\nPilas de salida: " << endl;
+    //cout << "\nPilas de salida: " << endl;
     for (int i = 7; i < 11; i++) {
-        cout << "Pila " << i + 1 << ": ";
+        //cout << "Pila " << i + 1 << ": ";
         mostrarPila(i,'s');
     }
     //Muestra la pila 12 y 13 (reserva y descarte)
-    cout << "\nPila de reserva: " << endl;
-    cout << "Pila " << 12 << ": " << "[**]" << endl;
+    /*cout << "\nPila de reserva: " << endl;
+    cout << "Pila " << 12 << ": " << "[**]" << endl;*/
     mostrarPila(11,'r');
-    cout << "Pila de descarte: " << endl;
+    /*cout << "Pila de descarte: " << endl;
     cout << "Pila " << 13 << ": ";
-    cout << PILA[12]->carta.Ncarta << PILA[12]->carta.Palo << "(" << C[PILA[12]->carta.color] << ")";
+    cout << PILA[12]->carta.Ncarta << PILA[12]->carta.Palo << "(" << C[PILA[12]->carta.color] << ")";*/
 }
 
 
@@ -467,6 +469,10 @@ void juego() {
     CCard.loadFromFile("C.png");
     window.setFramerateLimit(60);
     window.create(sf::VideoMode(800, 800), "Solitaire Game", sf::Style::Close);
+    cout << "\n\nElija una de las opciones: " << endl;
+    cout << "\n1.-Mover una carta.";
+    cout << "\n2.-Mover varias cartas.";
+    cout << "\n3.-Mover la reserva." << endl;
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event))
@@ -474,14 +480,28 @@ void juego() {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-            if (event.key.code == '1') {
-                cout << "XDDDDDDDDDDDD" << endl;
+            if (event.type == sf::Event::KeyReleased) {
+                cin.clear();
+                if (event.key.code == sf::Keyboard::Numpad1) {
+                    int t1 = 0, t2 = 0;
+                    cout << "Escribe la fila de donde sacar la carta : ";cin >> t1;
+                    cout << "Escribe la fila a la cual mover la carta : ";cin >> t2; 
+                    if (jugadaValida(1, t1 - 1, t2 - 1, 1) == 1) {
+                        moverCarta(t1 - 1, t2 - 1);
+                    }
+                    cout << endl;
+                    system("cls");
+                    cout << "\n\nElija una de las opciones: " << endl;
+                    cout << "\n1.-Mover una carta.";
+                    cout << "\n2.-Mover varias cartas.";
+                    cout << "\n3.-Mover la reserva." << endl;
+                }
             }
         }
         window.clear(sf::Color(15, 185, 74, 255));
         mostrarPilas();
         window.display();
-        cout << "\n\nElija una de las opciones: " << endl;
+        /*cout << "\n\nElija una de las opciones: " << endl;
         cout << "\n1.-Mover una carta.";
         cout << "\n2.-Mover varias cartas.";
         cout << "\n3.-Mover la reserva." << endl;
@@ -508,8 +528,7 @@ void juego() {
         if (gano() != 0) {
             break;
         }
-        cin.get();
-        system("cls");
+        cin.get();*/
     }
     cout << "Felicidades ganaste" << endl;
 }
