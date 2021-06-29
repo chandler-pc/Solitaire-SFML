@@ -228,13 +228,20 @@ void mostrarPila(int a, char t) {
             card.setTexture(&emptyTexture);
             window.draw(card);
         }
+        if (t == 'r' && longitud(12)!=0) {
+            card.setPosition(sf::Vector2f(60, 20));
+            card.setOutlineThickness(1.0f);
+            card.setOutlineColor(sf::Color::Black);
+            card.setTexture(&reverseCard);
+            window.draw(card);
+        }
     }
     //Si la longitud de la pila no es 0 entonces se imprime
     if (longitud(a) != 0) {
         if (t == 'j') {
             //Imprime las cartas que no están en el tope
             for (int i = 0; i < asteriscos[a]; i++) {
-                //cout << "[**]";
+                cout << "[**]";
                 card.setPosition(sf::Vector2f(60 + 100 * a, 150 + 80 * i));
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Black);
@@ -244,7 +251,6 @@ void mostrarPila(int a, char t) {
             }
             //Imprime la carta del tope y las cartas que se han movido
             int tempLong = longitud(a) - asteriscos[a];
-            //int tempMinus = 
             while (count != tempLong) {
                 count++;
                 char x = pointer->carta.Palo;
@@ -256,9 +262,9 @@ void mostrarPila(int a, char t) {
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Red);
                 card.setTexture(&TempCard);
-                card.setPosition(sf::Vector2f(60 + 100 * a, 150 + 80 * (longitud(a) - 1)));
+                card.setPosition(sf::Vector2f(60 + 100 * a, 150 + 80 * (longitud(a) - tempLong + count -1)));
                 numeroCarta.setString(to_string(n));
-                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 150 + 80 * (longitud(a)-1)));
+                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 150 + 80 * (longitud(a) - tempLong + count - 1)));
                 char cartColor = C[pointer->carta.color];
                 if (cartColor == 'N') {
                     numeroCarta.setFillColor(sf::Color::Black);
@@ -268,12 +274,48 @@ void mostrarPila(int a, char t) {
                 }
                 window.draw(card);
                 window.draw(numeroCarta);
-                //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
+                cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
                 pointer = pointer->siguiente;
             }
-            //cout << endl;
+            cout << endl;
         }
         if (t == 's') {
+            int tempLong = longitud(a) - asteriscos[a];
+            while (count != tempLong) {
+                count++;
+                window.draw(card);
+                window.draw(numeroCarta);
+                char x = pointer->carta.Palo;
+                int n = pointer->carta.Ncarta;
+                char cartColor = C[pointer->carta.color];
+                ostringstream auxstr;
+                auxstr << x << ".png";
+                string texture = auxstr.str();
+                TempCard.loadFromFile(texture);
+                card.setOutlineThickness(1.0f);
+                card.setOutlineColor(sf::Color::Black);
+                card.setTexture(&TempCard);
+                card.setPosition(sf::Vector2f(60 + 100 * (a - 4), 20));
+                numeroCarta.setString(to_string(n));
+                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * (a - 4), 20));
+                if (cartColor == 'N') {
+                    numeroCarta.setFillColor(sf::Color::Black);
+                }
+                else {
+                    numeroCarta.setFillColor(sf::Color::Red);
+                }
+                window.draw(card);
+                window.draw(numeroCarta);
+                cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
+                pointer = pointer->siguiente;
+            }
+            cout << endl;
+        }
+        if (t == 'd') {
+            while (count != longitud(a)-1) {
+                count++;
+                pointer = pointer->siguiente;
+            }
             char x = pointer->carta.Palo;
             int n = pointer->carta.Ncarta;
             ostringstream auxstr;
@@ -281,21 +323,24 @@ void mostrarPila(int a, char t) {
             string texture = auxstr.str();
             TempCard.loadFromFile(texture);
             card.setOutlineThickness(1.0f);
-            card.setOutlineColor(sf::Color::Black);
+            card.setOutlineColor(sf::Color::Red);
             card.setTexture(&TempCard);
-            card.setPosition(sf::Vector2f(60 + 100 * (a-4), 20));
+            card.setPosition(sf::Vector2f(160, 20));
             numeroCarta.setString(to_string(n));
-            numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * (a - 4), 20));
+            numeroCarta.setPosition(sf::Vector2f(165,20));
+            char cartColor = C[pointer->carta.color];
+            if (cartColor == 'N') {
+                numeroCarta.setFillColor(sf::Color::Black);
+            }
+            else {
+                numeroCarta.setFillColor(sf::Color::Red);
+            }
             window.draw(card);
             window.draw(numeroCarta);
-
-        }
-        if (t == 'r') {
-
         }
     }
     else {
-        //cout << endl;
+        cout << endl;
     }
 }
 
@@ -304,22 +349,23 @@ void mostrarPilas() {
     //Muestra las pilas del 1 al 7
     //cout << "Pilas de juego: " << endl;
     for (int i = 0; i < 7; i++) {
-        //cout << "Pila " << i + 1 << ": ";
+        cout << "Pila " << i + 1 << ": ";
         mostrarPila(i,'j');
     }
     //Muestra las pilas del 8 al 11
     //cout << "\nPilas de salida: " << endl;
     for (int i = 7; i < 11; i++) {
-        //cout << "Pila " << i + 1 << ": ";
+        cout << "Pila " << i + 1 << ": ";
         mostrarPila(i,'s');
     }
     //Muestra la pila 12 y 13 (reserva y descarte)
-    /*cout << "\nPila de reserva: " << endl;
-    cout << "Pila " << 12 << ": " << "[**]" << endl;*/
+    cout << "\nPila de reserva: " << endl;
+    cout << "Pila " << 12 << ": " << "[**]" << endl;
     mostrarPila(11,'r');
-    /*cout << "Pila de descarte: " << endl;
+    cout << "Pila de descarte: " << endl;
     cout << "Pila " << 13 << ": ";
-    cout << PILA[12]->carta.Ncarta << PILA[12]->carta.Palo << "(" << C[PILA[12]->carta.color] << ")";*/
+    cout << PILA[12]->carta.Ncarta << PILA[12]->carta.Palo << "(" << C[PILA[12]->carta.color] << ")";
+    mostrarPila(12, 'd');
 }
 
 
@@ -490,16 +536,30 @@ void juego() {
                         moverCarta(t1 - 1, t2 - 1);
                     }
                     cout << endl;
-                    system("cls");
-                    cout << "\n\nElija una de las opciones: " << endl;
-                    cout << "\n1.-Mover una carta.";
-                    cout << "\n2.-Mover varias cartas.";
-                    cout << "\n3.-Mover la reserva." << endl;
                 }
+                if (event.key.code == sf::Keyboard::Numpad2) {
+                    int t1 = 0, t2 = 0, nc = 0;
+                    cout << "Escribe la fila de donde sacar la carta : "; cin >> t1;
+                    cout << "Escribe la fila a la cual mover la carta : "; cin >> t2;
+                    cout << "Ingrese la cantidad de cartas que desea mover: "; cin >> nc;
+                    if (jugadaValida(2, t1 - 1, t2 - 1, nc) == 1) {
+                        moverVariasCartas(t1 - 1, t2 - 1, nc);
+                    }
+
+                }
+                if (event.key.code == sf::Keyboard::Numpad3) {
+                    moverLareserva();
+                }
+                system("cls");
             }
         }
         window.clear(sf::Color(15, 185, 74, 255));
         mostrarPilas();
+        cout << "\n\nElija una de las opciones: " << endl;
+        cout << "\n1.-Mover una carta.";
+        cout << "\n2.-Mover varias cartas.";
+        cout << "\n3.-Mover la reserva." << endl;
+        system("cls");
         window.display();
         /*cout << "\n\nElija una de las opciones: " << endl;
         cout << "\n1.-Mover una carta.";
