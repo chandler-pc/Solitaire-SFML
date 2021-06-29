@@ -39,7 +39,12 @@ sf::Texture TempCard;
 sf::Texture emptyTexture;
 sf::Font letra;
 sf::Text numeroCarta;
+sf::Text help;
+sf::RenderWindow helpWindow;
+sf::RenderWindow oneCardWindow;
+sf::RenderWindow moreCardWindow;
 sf::RenderWindow window;
+sf::RectangleShape MakeBtn(float x, float y, sf::Color color, float posX, float posY);
 
 //Prototipo de todas las funciones que se utilizarán en el programa
 void inicializarCartas();
@@ -50,7 +55,7 @@ void inicializarPilas();
 void repartirCartas();
 void moverCarta(int a, int b);
 void moverVariasCartas(int a, int b, int o);
-void mostrarPila(int a);
+void mostrarPila(int a, char t);
 void mostrarPilas();
 int  longitud(int a);
 void moverLareserva();
@@ -241,7 +246,7 @@ void mostrarPila(int a, char t) {
         if (t == 'j') {
             //Imprime las cartas que no están en el tope
             for (int i = 0; i < asteriscos[a]; i++) {
-                cout << "[**]";
+                //cout << "[**]";
                 card.setPosition(sf::Vector2f(60 + 100 * a, 150 + 80 * i));
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Black);
@@ -274,10 +279,10 @@ void mostrarPila(int a, char t) {
                 }
                 window.draw(card);
                 window.draw(numeroCarta);
-                cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
+                //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
                 pointer = pointer->siguiente;
             }
-            cout << endl;
+            //cout << endl;
         }
         if (t == 's') {
             int tempLong = longitud(a) - asteriscos[a];
@@ -306,10 +311,10 @@ void mostrarPila(int a, char t) {
                 }
                 window.draw(card);
                 window.draw(numeroCarta);
-                cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
+                //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
                 pointer = pointer->siguiente;
             }
-            cout << endl;
+            //cout << endl;
         }
         if (t == 'd') {
             while (count != longitud(a)-1) {
@@ -340,7 +345,7 @@ void mostrarPila(int a, char t) {
         }
     }
     else {
-        cout << endl;
+        //cout << endl;
     }
 }
 
@@ -349,22 +354,22 @@ void mostrarPilas() {
     //Muestra las pilas del 1 al 7
     //cout << "Pilas de juego: " << endl;
     for (int i = 0; i < 7; i++) {
-        cout << "Pila " << i + 1 << ": ";
+        //cout << "Pila " << i + 1 << ": ";
         mostrarPila(i,'j');
     }
     //Muestra las pilas del 8 al 11
     //cout << "\nPilas de salida: " << endl;
     for (int i = 7; i < 11; i++) {
-        cout << "Pila " << i + 1 << ": ";
+        //cout << "Pila " << i + 1 << ": ";
         mostrarPila(i,'s');
     }
     //Muestra la pila 12 y 13 (reserva y descarte)
-    cout << "\nPila de reserva: " << endl;
-    cout << "Pila " << 12 << ": " << "[**]" << endl;
+    /*cout << "\nPila de reserva: " << endl;
+    cout << "Pila " << 12 << ": " << "[**]" << endl;*/
     mostrarPila(11,'r');
-    cout << "Pila de descarte: " << endl;
+    /*cout << "Pila de descarte: " << endl;
     cout << "Pila " << 13 << ": ";
-    cout << PILA[12]->carta.Ncarta << PILA[12]->carta.Palo << "(" << C[PILA[12]->carta.color] << ")";
+    cout << PILA[12]->carta.Ncarta << PILA[12]->carta.Palo << "(" << C[PILA[12]->carta.color] << ")";*/
     mostrarPila(12, 'd');
 }
 
@@ -498,6 +503,47 @@ int jugadaValida(int a, int b, int c, int d) {
     return valor;
 }
 
+sf::RectangleShape MakeBtn(float x, float y, sf::Color color, float posX, float posY) {
+    sf::RectangleShape btn;
+    btn.setSize(sf::Vector2f(x, y));
+    btn.setFillColor(color);
+    btn.setPosition(sf::Vector2f((posX - btn.getGlobalBounds().width)/2, posY));
+    return btn;
+}
+
+sf::RectangleShape MakeTxtBox(float x, float y, float posX, float posY) {
+    sf::RectangleShape tb;
+    tb.setFillColor(sf::Color::White);
+    tb.setSize(sf::Vector2f(x, y));
+    tb.setPosition(sf::Vector2f(posX,posY));
+    return tb;
+}
+
+void JugadaNoValidaVentana() {
+    sf::RenderWindow notValid;
+    sf::Text textNV;
+    textNV.setFont(letra);
+    textNV.setCharacterSize(25);
+    textNV.setFillColor(sf::Color::White);
+    textNV.setString("Esa jugada no es válida, inténtelo nuevamente o cierre la ventana.");
+    sf::FloatRect textRect = textNV.getLocalBounds();
+    textNV.setOrigin(textRect.left + textRect.width / 2.0f,textRect.top + textRect.height / 2.0f);
+    textNV.setPosition(sf::Vector2f(305, 50));
+    notValid.create(sf::VideoMode(610, 100), "Jugada inválida", sf::Style::Close);
+    notValid.setFramerateLimit(60);
+    while (notValid.isOpen()) {
+        sf::Event eventNV;
+        while (notValid.pollEvent(eventNV)) {
+            if (eventNV.type == sf::Event::Closed) {
+                notValid.close();
+            }
+        }
+        notValid.clear(sf::Color(118, 178, 146, 255));
+        notValid.draw(textNV);
+        notValid.display();
+    }
+}
+
 void juego() {
     //Mostrar el juego
     int a, b, c, d;
@@ -508,17 +554,24 @@ void juego() {
     letra.loadFromFile("PumpkinPancakes.ttf");
     numeroCarta.setFont(letra);
     numeroCarta.setCharacterSize(20);
+    help.setString("Presiona H para ayuda.");
+    help.setFont(letra);
+    help.setCharacterSize(30);
+    help.setPosition(sf::Vector2f(20, 750));
     reverseCard.loadFromFile("reverse.png");
     ECard.loadFromFile("E.png");
     DCard.loadFromFile("D.png");
     TCard.loadFromFile("T.png");
     CCard.loadFromFile("C.png");
-    window.setFramerateLimit(60);
     window.create(sf::VideoMode(800, 800), "Solitaire Game", sf::Style::Close);
-    cout << "\n\nElija una de las opciones: " << endl;
+    window.setFramerateLimit(60);
+    string s1 = "", s2 = "";
+    bool oneWinTbSel = true;
+    bool twoWin = false;
+    /*cout << "\n\nElija una de las opciones: " << endl;
     cout << "\n1.-Mover una carta.";
     cout << "\n2.-Mover varias cartas.";
-    cout << "\n3.-Mover la reserva." << endl;
+    cout << "\n3.-Mover la reserva." << endl;*/
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event))
@@ -528,38 +581,141 @@ void juego() {
             }
             if (event.type == sf::Event::KeyReleased) {
                 cin.clear();
-                if (event.key.code == sf::Keyboard::Numpad1) {
-                    int t1 = 0, t2 = 0;
+                if (event.key.code == sf::Keyboard::Numpad1 && !twoWin) {
+                    twoWin = true;
+                    /*int t1 = 0, t2 = 0;
                     cout << "Escribe la fila de donde sacar la carta : ";cin >> t1;
                     cout << "Escribe la fila a la cual mover la carta : ";cin >> t2; 
                     if (jugadaValida(1, t1 - 1, t2 - 1, 1) == 1) {
                         moverCarta(t1 - 1, t2 - 1);
                     }
-                    cout << endl;
+                    cout << endl;*/
+                    oneCardWindow.create(sf::VideoMode(500, 200), "Mover una carta", sf::Style::Close);
+                    oneCardWindow.setFramerateLimit(60);
+                    sf::Text t1, t2;
+                    t1.setFont(letra); t2.setFont(letra);
+                    t1.setCharacterSize(20); t2.setCharacterSize(20);
+                    t1.setPosition(sf::Vector2f(20, 20));
+                    t2.setPosition(sf::Vector2f(20, 80));
+                    t1.setString("Escribe la pila de donde sacar la carta : ");
+                    t2.setString("Escribe la fila a la cual mover la carta : ");
+                    sf::RectangleShape btn = MakeBtn(80, 40, sf::Color(191,195,203), oneCardWindow.getSize().x, 150);
+                    sf::RectangleShape tb1 = MakeTxtBox(100, 20, 350, 25);
+                    sf::RectangleShape tb2 = MakeTxtBox(100, 20, 350, 85);
+                    sf::Text n1,n2;
+                    int in1 = 0, in2 = 0;
+                    n1.setFont(letra);
+                    n1.setFillColor(sf::Color::Black);
+                    n1.setCharacterSize(20);
+                    n1.setPosition(352, 20);
+                    n2.setFont(letra);
+                    n2.setFillColor(sf::Color::Black);
+                    n2.setCharacterSize(20);
+                    n2.setPosition(352, 80);
+                    while (oneCardWindow.isOpen()) {
+                        sf::Event oneEvent;
+                        while (oneCardWindow.pollEvent(oneEvent)) {
+                            if (oneEvent.type == sf::Event::Closed) {
+                                oneCardWindow.close();
+                            }
+                            if (oneEvent.type == sf::Event::TextEntered) {
+                                if (oneEvent.text.unicode <= 57 && oneEvent.text.unicode >= 48) {
+                                    if (oneWinTbSel) {
+                                        s1 += static_cast<char>(oneEvent.text.unicode);
+                                        in1 = stoi(s1);
+                                        n1.setString(s1);
+                                    }
+                                    else {
+                                        s2 += static_cast<char>(oneEvent.text.unicode);
+                                        in2 = stoi(s2);
+                                        n2.setString(s2);
+                                    }
+                                }
+                            }
+                        }
+                        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                            sf::Vector2i mousePos = sf::Mouse::getPosition(oneCardWindow);
+                            int x = 0;
+                            if (mousePos.x <= btn.getSize().x + btn.getPosition().x && mousePos.x >= btn.getPosition().x && mousePos.y <= btn.getSize().y + btn.getPosition().y && mousePos.y >= btn.getPosition().y) {
+                                if (jugadaValida(1, in1 - 1, in2 - 1, 1) == 1) {
+                                    oneCardWindow.close();
+                                    moverCarta(in1 - 1, in2 - 1);
+                                }
+                                else {
+                                    JugadaNoValidaVentana();
+                                    in1 = 0, in2 = 0;
+                                    s1 = "", s2 = "";
+                                    n1.setString(s1);
+                                    n2.setString(s2);
+                                }
+                            }
+                            if (mousePos.x <= tb1.getSize().x + tb1.getPosition().x && mousePos.x >= tb1.getPosition().x && mousePos.y <= tb1.getSize().y + tb1.getPosition().y && mousePos.y >= tb1.getPosition().y) {
+                                oneWinTbSel = true;
+                            }
+                            if (mousePos.x <= tb2.getSize().x + tb2.getPosition().x && mousePos.x >= tb2.getPosition().x && mousePos.y <= tb2.getSize().y + tb2.getPosition().y && mousePos.y >= tb2.getPosition().y) {
+                                oneWinTbSel = false;
+                            }
+                        }
+                        if (oneWinTbSel) {
+                            tb1.setFillColor(sf::Color(186, 243, 247, 255));
+                            tb2.setFillColor(sf::Color::White);
+                        }
+                        else {
+                            tb2.setFillColor(sf::Color(186, 243, 247, 255));
+                            tb1.setFillColor(sf::Color::White);
+                        }
+                        oneCardWindow.clear(sf::Color(118, 178, 146, 255));
+                        oneCardWindow.draw(t1);
+                        oneCardWindow.draw(t2);
+                        oneCardWindow.draw(tb1);
+                        oneCardWindow.draw(tb2);
+                        oneCardWindow.draw(btn);
+                        oneCardWindow.draw(n1);
+                        oneCardWindow.draw(n2);
+                        oneCardWindow.display();
+                    }
                 }
-                if (event.key.code == sf::Keyboard::Numpad2) {
-                    int t1 = 0, t2 = 0, nc = 0;
+                if (event.key.code == sf::Keyboard::Numpad2 && !twoWin) {
+                    twoWin = true;
+                    /*int t1 = 0, t2 = 0, nc = 0;
                     cout << "Escribe la fila de donde sacar la carta : "; cin >> t1;
                     cout << "Escribe la fila a la cual mover la carta : "; cin >> t2;
                     cout << "Ingrese la cantidad de cartas que desea mover: "; cin >> nc;
                     if (jugadaValida(2, t1 - 1, t2 - 1, nc) == 1) {
                         moverVariasCartas(t1 - 1, t2 - 1, nc);
-                    }
+                    }*/
 
                 }
                 if (event.key.code == sf::Keyboard::Numpad3) {
                     moverLareserva();
+                }
+                if (event.key.code == sf::Keyboard::H && !twoWin) {
+                    twoWin = true;
+                    helpWindow.create(sf::VideoMode(500, 300), "Ayuda", sf::Style::Close);
+                    helpWindow.setFramerateLimit(60);
+                    while (helpWindow.isOpen()) {
+                        sf::Event helpEvent;
+                        while (helpWindow.pollEvent(helpEvent)) {
+                            if (helpEvent.type == sf::Event::Closed) {
+                                helpWindow.close();
+                            }
+                        }
+                        helpWindow.clear(sf::Color(118, 178, 146, 255));
+                        helpWindow.display();
+                    }
                 }
                 system("cls");
             }
         }
         window.clear(sf::Color(15, 185, 74, 255));
         mostrarPilas();
-        cout << "\n\nElija una de las opciones: " << endl;
+        /*cout << "\n\nElija una de las opciones: " << endl;
         cout << "\n1.-Mover una carta.";
         cout << "\n2.-Mover varias cartas.";
         cout << "\n3.-Mover la reserva." << endl;
-        system("cls");
+        system("cls");*/
+        twoWin = false;
+        window.draw(help);
         window.display();
         /*cout << "\n\nElija una de las opciones: " << endl;
         cout << "\n1.-Mover una carta.";
