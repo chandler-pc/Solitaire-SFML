@@ -640,6 +640,8 @@ void juego() {
                                 if (jugadaValida(1, in1 - 1, in2 - 1, 1) == 1) {
                                     oneCardWindow.close();
                                     moverCarta(in1 - 1, in2 - 1);
+                                    in1 = 0, in2 = 0;
+                                    s1 = "", s2 = "";
                                 }
                                 else {
                                     JugadaNoValidaVentana();
