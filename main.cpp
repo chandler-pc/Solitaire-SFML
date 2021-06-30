@@ -199,6 +199,9 @@ void moverVariasCartas(int a, int b, int o) {
 int longitud(int a) {
     Carta aux[N_Cartas];
     int cont = 0;
+    if (a > 12) {
+        return 0;
+    }
     while (PILA[a] != NULL) {
         //Mientras la pila sea distinta de NULL, guarda los elementos en un array auxiliar y suma al contador
         aux[cont] = PILA[a]->carta;
@@ -618,7 +621,7 @@ void OneCardWindow() {
                             n1.setString(s1);
                         }
                         if (!oneWinTbSel) {
-                            if (s2.size() == 1) {
+                            if (s2.size() <= 1) {
                                 s2 = "";
                                 in2 = 0;
                             }
@@ -743,21 +746,58 @@ void MoreCardWindow() {
                 moreCardWindow.close();
             }
             if (moreEvent.type == sf::Event::TextEntered) {
-                if (moreEvent.text.unicode <= 57 && moreEvent.text.unicode >= 48) {
-                    if (moreWinTbSel == 0) {
-                        s1 += static_cast<char>(moreEvent.text.unicode);
-                        in1 = stoi(s1);
-                        n1.setString(s1);
-                    }
-                    else if(moreWinTbSel == 1){
-                        s2 += static_cast<char>(moreEvent.text.unicode);
-                        in2 = stoi(s2);
-                        n2.setString(s2);
+                if (moreEvent.text.unicode <= 57 && moreEvent.text.unicode >= 48 || moreEvent.text.unicode == 8) {
+                    if (moreEvent.text.unicode == 8) {
+                        if (moreWinTbSel == 0) {
+                            if (s1.size() <= 1) {
+                                s1 = "";
+                                in1 = 0;
+                            }
+                            else {
+                                s1 = s1.substr(0, s1.size() - 1);
+                                in1 = stoi(s1);
+                            }
+                            n1.setString(s1);
+                        }
+                        else if (moreWinTbSel == 1) {
+                            if (s2.size() <= 1) {
+                                s2 = "";
+                                in2 = 0;
+                            }
+                            else {
+                                s2 = s2.substr(0, s2.size() - 1);
+                                in2 = stoi(s2);
+                            }
+                            n2.setString(s2);
+                        }
+                        else {
+                            if (s3.size() <= 1) {
+                                s3 = "";
+                                in3 = 0;
+                            }
+                            else {
+                                s3 = s3.substr(0, s3.size() - 1);
+                                in3 = stoi(s3);
+                            }
+                            n3.setString(s3);
+                        }
                     }
                     else {
-                        s3 += static_cast<char>(moreEvent.text.unicode);
-                        in3 = stoi(s3);
-                        n3.setString(s3);
+                        if (moreWinTbSel == 0) {
+                            s1 += static_cast<char>(moreEvent.text.unicode);
+                            in1 = stoi(s1);
+                            n1.setString(s1);
+                        }
+                        else if (moreWinTbSel == 1) {
+                            s2 += static_cast<char>(moreEvent.text.unicode);
+                            in2 = stoi(s2);
+                            n2.setString(s2);
+                        }
+                        else {
+                            s3 += static_cast<char>(moreEvent.text.unicode);
+                            in3 = stoi(s3);
+                            n3.setString(s3);
+                        }
                     }
                 }
             }
