@@ -3,9 +3,6 @@
 #include <time.h>
 #include <SFML/Graphics.hpp>
 #include <sstream>
-//Para ocultar la consola
-#include <windows.h>
-//#define _WIN32_WINNT 0x0500
 using namespace std;
 //Constantes:
 const int N_Cartas = 52;
@@ -78,9 +75,6 @@ void barajear();
 Pila* intercambio(Pila*);
 
 int main() {
-    //Ocultar consola
-    /*HWND hWnd = GetConsoleWindow();
-    ShowWindow(hWnd, SW_HIDE);*/
     //Función principal
     juego();
     return 0;
