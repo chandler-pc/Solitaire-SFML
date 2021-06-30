@@ -1,3 +1,4 @@
+//Para una óptima visualización se recomiendo una pantalla de al menos 900 pixeles de altura
 #include<iostream>
 #include <stdlib.h>
 #include <time.h>
@@ -70,7 +71,7 @@ int  longitud(int a);
 void moverLareserva();
 int gano();
 void juego();
-int jugadaValida(int a, int b, int c, int d);
+int jugadaValida(int b, int c, int d);
 void barajear();
 Pila* intercambio(Pila*);
 
