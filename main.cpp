@@ -439,50 +439,60 @@ Pila* intercambio(Pila* pointer) {
   d: cuantas cartas vamos a mover.
 */
 
-
-int jugadaValida(int a, int b, int c, int d) {
+int jugadaValida(int b, int c, int d) {
     int valor = 1; // 1: jugada valida y  0: jugada invalida
     Carta aux[60];
-
-    if (d > longitud(b)) { //las cartas que vamos a mover deben ser mayor al tamaño de la pila de donde vamos a extraer
-        valor = 0;
+    //b: salida , c:llegada
+    if (d > longitud(b)) { //si el numero de cartas que vamos a mover es mayor al tamaño de la pila de donde vamos a extraer
+        valor = 0;//No se realiza acciones
     }
     else {
-        if (c < 7) { //Mover cartas hascias las pilas de juego
+        if (c < 7) { //Mover cartas hacia las pilas de juego
             if (d == 1) { //si solo se mueve una carta
-                if (longitud(c) == 0) { // si esta vacia la pila de llegada solo debe aceptar 13
-                    if (PILA[b]->carta.Ncarta != 13) {
+                if (longitud(c) == 0) { // si la pila de llegada esta vacia solo debe aceptar una carta de numero 13
+                    if (PILA[b]->carta.Ncarta < 13) {
                         valor = 0;
                     }
                 }
-                else { // si en la pila de llegada hay mas de un elemento
-                 //si no es consecutiva
-                    if (PILA[b]->carta.Ncarta + 1 != PILA[c]->carta.Ncarta) {
-                        valor = 0;
-                    }
-                    //si no es del mismo color
-                    if (PILA[b]->carta.color != 1 - PILA[c]->carta.color) {
+                else { // si en la pila de llegada hay 1 o mas elementos
+                 //si no es consecutiva o es del mismo color
+                    if (PILA[b]->carta.Ncarta + 1 != PILA[c]->carta.Ncarta || PILA[b]->carta.color == PILA[c]->carta.color) {
                         valor = 0;
                     }
                 }
             }
             else { // si se mueve más de una carta
              //guardo las cartas de mi pila en un array
-                for (int i = 1; i < d; i++) {
-                    aux[i] = PILA[b]->carta;
-                    quitarCarta(PILA[b], PILA[b]->carta);
+             //pila a la que se mueve: vacia
+                if (longitud(c) == 0) {
+                    for (int i = 0; i < d; i++) {
+                        aux[i] = PILA[b]->carta;
+                        quitarCarta(PILA[b], PILA[b]->carta);
+                    }
+                    if (aux[d - 1].Ncarta == 13) {
+                        //vuelvo a llenar mi pila como estaba
+                        for (int i = 0; i < d; i++) {
+                            agregarCarta(PILA[b], aux[d - i - 1]);
+                        }
+                    }
+                    else {
+                        valor = 0;
+                    }
                 }
-                //vuelvo a llenar mi pila como estaba
-                for (int i = 1; i < d; i++) {
-                    agregarCarta(PILA[b], aux[d - i - 1]);
-                }
-                //si la carta no es consecutiva
-                if (aux[d - 1].Ncarta + 1 != PILA[c]->carta.Ncarta) {
-                    valor = 0;
-                }
-                //si la carta no es del mismo color
-                if (aux[d - 1].color != 1 - PILA[c]->carta.color) {
-                    valor = 0;
+                else {//pila a la que se mueve: con cartas
+                    //guardo las cartas de mi pila en un array
+                    for (int i = 0; i < d; i++) {
+                        aux[i] = PILA[b]->carta;
+                        quitarCarta(PILA[b], PILA[b]->carta);
+                    }
+                    //vuelvo a llenar mi pila como estaba
+                    for (int i = 0; i < d; i++) {
+                        agregarCarta(PILA[b], aux[d - i - 1]);
+                    }
+                    //si la carta no es consecutiva o no es del mismo color
+                    if (aux[d - 1].Ncarta + 1 != PILA[c]->carta.Ncarta || aux[d - 1].color == PILA[c]->carta.color) {
+                        valor = 0;
+                    }
                 }
             }
         }
@@ -494,12 +504,8 @@ int jugadaValida(int a, int b, int c, int d) {
                 }
             }
             else {  //si la longitud mayor a 0
-             //deben ser consecutibas 
-                if (PILA[b]->carta.Ncarta - 1 != PILA[c]->carta.Ncarta) {
-                    valor = 0;
-                }
-                //mismo color
-                if (PILA[b]->carta.color != PILA[c]->carta.color) {
+             //deben ser consecutivas y mismo color
+                if (PILA[b]->carta.Ncarta - 1 != PILA[c]->carta.Ncarta || PILA[b]->carta.color != PILA[c]->carta.color) {
                     valor = 0;
                 }
             }
@@ -592,10 +598,12 @@ void OneCardWindow() {
         sf::Event oneEvent;
         while (oneCardWindow.pollEvent(oneEvent)) {
             if (oneEvent.type == sf::Event::Closed) {
+                in1 = 0, in2 = 0;
+                s1 = "", s2 = "";
                 oneCardWindow.close();
             }
             if (oneEvent.type == sf::Event::TextEntered) {
-                if (oneEvent.text.unicode <= 57 && oneEvent.text.unicode >= 48) {
+                if ((oneEvent.text.unicode <= 57 && oneEvent.text.unicode >= 48) /*|| oneEvent.text.unicode == 8*/) {
                     if (oneWinTbSel) {
                         s1 += static_cast<char>(oneEvent.text.unicode);
                         in1 = stoi(s1);
@@ -618,7 +626,7 @@ void OneCardWindow() {
                 if (to_string(in2) == "0") {
                     in2 = 1;
                 }
-                if (jugadaValida(1, in1 - 1, in2 - 1, 1) == 1) {
+                if (jugadaValida(in1 - 1, in2 - 1, 1) == 1) {
                     oneCardWindow.close();
                     moverCarta(in1 - 1, in2 - 1);
                     in1 = 0, in2 = 0;
@@ -703,6 +711,8 @@ void MoreCardWindow() {
         sf::Event moreEvent;
         while (moreCardWindow.pollEvent(moreEvent)) {
             if (moreEvent.type == sf::Event::Closed) {
+                in1 = 0; in2 = 0; in3 = 0;
+                s1 = "", s2 = ""; s3 = "";
                 moreCardWindow.close();
             }
             if (moreEvent.type == sf::Event::TextEntered) {
@@ -737,7 +747,7 @@ void MoreCardWindow() {
                 if (to_string(in3) == "0") {
                     in3 = 1;
                 }
-                if (jugadaValida(2, in1 - 1, in2 - 1, in3) == 1) {
+                if (jugadaValida(in1 - 1, in2 - 1, in3) == 1) {
                     moreCardWindow.close();
                     moverVariasCartas(in1 - 1, in2 - 1,in3);
                     in1 = 0; in2 = 0; in3 = 0;
@@ -862,7 +872,7 @@ void juego() {
                 window.close();
             }
             if (event.type == sf::Event::KeyReleased) {
-                if (event.key.code == sf::Keyboard::Numpad1 && !twoWin) {
+                if ((event.key.code == sf::Keyboard::Numpad1 || event.key.code == sf::Keyboard::Num1) && !twoWin) {
                     twoWin = true;
                     /*int t1 = 0, t2 = 0;
                     cout << "Escribe la fila de donde sacar la carta : ";cin >> t1;
@@ -873,7 +883,7 @@ void juego() {
                     cout << endl;*/
                     OneCardWindow();
                 }
-                if (event.key.code == sf::Keyboard::Numpad2 && !twoWin) {
+                if ((event.key.code == sf::Keyboard::Numpad2 || event.key.code == sf::Keyboard::Num2) && !twoWin) {
                     twoWin = true;
                     /*int t1 = 0, t2 = 0, nc = 0;
                     cout << "Escribe la fila de donde sacar la carta : "; cin >> t1;
@@ -884,7 +894,7 @@ void juego() {
                     }*/
                     MoreCardWindow();
                 }
-                if (event.key.code == sf::Keyboard::Numpad3) {
+                if ((event.key.code == sf::Keyboard::Numpad3 || event.key.code == sf::Keyboard::Num3)) {
                     moverLareserva();
                 }
                 if (event.key.code == sf::Keyboard::H && !twoWin) {
