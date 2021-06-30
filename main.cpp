@@ -603,16 +603,43 @@ void OneCardWindow() {
                 oneCardWindow.close();
             }
             if (oneEvent.type == sf::Event::TextEntered) {
-                if ((oneEvent.text.unicode <= 57 && oneEvent.text.unicode >= 48) /*|| oneEvent.text.unicode == 8*/) {
-                    if (oneWinTbSel) {
-                        s1 += static_cast<char>(oneEvent.text.unicode);
-                        in1 = stoi(s1);
-                        n1.setString(s1);
+                if ((oneEvent.text.unicode <= 57 && oneEvent.text.unicode >= 48) || oneEvent.text.unicode == 8) {
+                    
+                    if (oneEvent.text.unicode == 8) {
+                        if (oneWinTbSel) {
+                            if (s1.size() <= 1) {
+                                s1 = "";
+                                in1 = 0;
+                            }
+                            else {
+                                s1 = s1.substr(0, s1.size() - 1);
+                                in1 = stoi(s1);
+                            }
+                            n1.setString(s1);
+                        }
+                        if (!oneWinTbSel) {
+                            if (s2.size() == 1) {
+                                s2 = "";
+                                in2 = 0;
+                            }
+                            else {
+                                s2 = s2.substr(0, s2.size() - 1);
+                                in2 = stoi(s2);
+                            }
+                            n2.setString(s2);
+                        }
                     }
                     else {
-                        s2 += static_cast<char>(oneEvent.text.unicode);
-                        in2 = stoi(s2);
-                        n2.setString(s2);
+                        if (oneWinTbSel) {
+                            s1 += static_cast<char>(oneEvent.text.unicode);
+                            in1 = stoi(s1);
+                            n1.setString(s1);
+                        }
+                        else {
+                            s2 += static_cast<char>(oneEvent.text.unicode);
+                            in2 = stoi(s2);
+                            n2.setString(s2);
+                        }
                     }
                 }
             }
