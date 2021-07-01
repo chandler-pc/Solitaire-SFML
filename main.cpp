@@ -231,6 +231,7 @@ void mostrarPila(int a, char t) {
     int count = 0;
     if (longitud(a) == 0) {
         if (t == 's') {
+            //
             emptyTexture.create(80, 100);
             card.setOutlineThickness(1.0f);
             card.setOutlineColor(sf::Color::White);
@@ -565,7 +566,7 @@ void JugadaNoValidaVentana() {
         notValid.display();
     }
 }
-
+//Render de mover una carta
 void OneCardWindow() {
     oneCardWindow.create(sf::VideoMode(500, 200), "Mover una carta", sf::Style::Close);
     sf::Image icon;
@@ -589,7 +590,7 @@ void OneCardWindow() {
     sf::RectangleShape tb1 = MakeTxtBox(100, 20, 350, 25);
     sf::RectangleShape tb2 = MakeTxtBox(100, 20, 350, 85);
     sf::Text n1, n2;
-    int in1 = 0, in2 = 0;
+    long long  int in1 = 0, in2 = 0;
     n1.setFont(letra);
     n1.setFillColor(sf::Color::Black);
     n1.setCharacterSize(20);
@@ -606,7 +607,7 @@ void OneCardWindow() {
                 s1 = "", s2 = "";
                 oneCardWindow.close();
             }
-            if (oneEvent.type == sf::Event::TextEntered) {
+            if (oneEvent.type == sf::Event::TextEntered) { 
                 if ((oneEvent.text.unicode <= 57 && oneEvent.text.unicode >= 48) || oneEvent.text.unicode == 8) {
                     
                     if (oneEvent.text.unicode == 8) {
@@ -615,8 +616,13 @@ void OneCardWindow() {
                                 s1 = "";
                                 in1 = 0;
                             }
-                            else {
-                                s1 = s1.substr(0, s1.size() - 1);
+                            else{
+                                if (s1.size() > 2) {
+                                    s1 = s1.substr(0, 1);
+                                }
+                                else {
+                                    s1 = s1.substr(0, s1.size() - 1);
+                                }
                                 in1 = stoi(s1);
                             }
                             n1.setString(s1);
@@ -626,8 +632,13 @@ void OneCardWindow() {
                                 s2 = "";
                                 in2 = 0;
                             }
-                            else {
-                                s2 = s2.substr(0, s2.size() - 1);
+                            else{
+                                if (s2.size() > 2) {
+                                    s2 = s2.substr(0, 1);
+                                }
+                                else {
+                                    s2 = s2.substr(0, s2.size() - 1);
+                                }
                                 in2 = stoi(s2);
                             }
                             n2.setString(s2);
@@ -636,13 +647,18 @@ void OneCardWindow() {
                     else {
                         if (oneWinTbSel) {
                             s1 += static_cast<char>(oneEvent.text.unicode);
-                            in1 = stoi(s1);
-                            n1.setString(s1);
+                            if (s1.size() > 0 && s1.size() <= 2) {
+                                in1 = stoi(s1);
+                                n1.setString(s1);
+                            }
                         }
                         else {
                             s2 += static_cast<char>(oneEvent.text.unicode);
-                            in2 = stoi(s2);
-                            n2.setString(s2);
+                            if (s2.size() > 0 && s2.size() <= 2) {
+                                in2 = stoi(s2);
+                                n2.setString(s2);
+                            }
+                            
                         }
                     }
                 }
@@ -699,6 +715,7 @@ void OneCardWindow() {
         oneCardWindow.display();
     }
 }
+//Render de mover varias cartas
 void MoreCardWindow() {
     moreCardWindow.create(sf::VideoMode(500, 250), "Mover varias cartas", sf::Style::Close);
     sf::Image icon;
@@ -755,7 +772,12 @@ void MoreCardWindow() {
                                 in1 = 0;
                             }
                             else {
-                                s1 = s1.substr(0, s1.size() - 1);
+                                if (s1.size() > 2) {
+                                    s1 = s1.substr(0, 1);
+                                }
+                                else {
+                                    s1 = s1.substr(0, s1.size() - 1);
+                                }
                                 in1 = stoi(s1);
                             }
                             n1.setString(s1);
@@ -766,7 +788,12 @@ void MoreCardWindow() {
                                 in2 = 0;
                             }
                             else {
-                                s2 = s2.substr(0, s2.size() - 1);
+                                if (s2.size() > 2) {
+                                    s2 = s2.substr(0, 1);
+                                }
+                                else {
+                                    s2 = s2.substr(0, s2.size() - 1);
+                                }
                                 in2 = stoi(s2);
                             }
                             n2.setString(s2);
@@ -777,8 +804,13 @@ void MoreCardWindow() {
                                 in3 = 0;
                             }
                             else {
-                                s3 = s3.substr(0, s3.size() - 1);
-                                in3 = stoi(s3);
+                                if (s3.size() > 2) {
+                                    s3 = s3.substr(0, 1);
+                                }
+                                else {
+                                    s3 = s3.substr(0, s3.size() - 1);
+                                }
+                                in2 = stoi(s3);
                             }
                             n3.setString(s3);
                         }
@@ -786,18 +818,26 @@ void MoreCardWindow() {
                     else {
                         if (moreWinTbSel == 0) {
                             s1 += static_cast<char>(moreEvent.text.unicode);
-                            in1 = stoi(s1);
-                            n1.setString(s1);
+                            if (s1.size() > 0 && s1.size() <= 2) {
+                                in1 = stoi(s1);
+                                n1.setString(s1);
+                            }
+                            
                         }
                         else if (moreWinTbSel == 1) {
                             s2 += static_cast<char>(moreEvent.text.unicode);
-                            in2 = stoi(s2);
-                            n2.setString(s2);
+                            if (s2.size() > 0 && s2.size() <= 2) {
+                                in2 = stoi(s2);
+                                n2.setString(s2);
+                            }
+                            
                         }
                         else {
                             s3 += static_cast<char>(moreEvent.text.unicode);
-                            in3 = stoi(s3);
-                            n3.setString(s3);
+                            if (s3.size() > 0 && s3.size() <= 2) {
+                                in3 = stoi(s3);
+                                n3.setString(s3);
+                            }
                         }
                     }
                 }
