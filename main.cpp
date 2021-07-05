@@ -1,5 +1,5 @@
 //Para una óptima visualización se recomiendo una pantalla de al menos 900 pixeles de altura
-#include<iostream>
+#include <iostream>
 #include <stdlib.h>
 #include <time.h>
 #include <SFML/Graphics.hpp>
@@ -21,6 +21,7 @@ struct Carta {
     char Palo; //Palo
     int color; //Color
     int Ncarta; //Numero de carta
+    sf::RectangleShape card;
 }CARTAS[N_Cartas];
 
 //Struct Pila
@@ -72,7 +73,6 @@ void moverLareserva();
 int gano();
 void juego();
 int jugadaValida(int b, int c, int d);
-void barajear();
 Pila* intercambio(Pila*);
 
 int main() {
@@ -231,7 +231,6 @@ void mostrarPila(int a, char t) {
     int count = 0;
     if (longitud(a) == 0) {
         if (t == 's') {
-            //
             emptyTexture.create(80, 100);
             card.setOutlineThickness(1.0f);
             card.setOutlineColor(sf::Color::White);
@@ -282,6 +281,7 @@ void mostrarPila(int a, char t) {
                 card.setOutlineColor(sf::Color::Red);
                 card.setTexture(&TempCard);
                 card.setPosition(sf::Vector2f(60 + 100 * a, 150 + 80 * (longitud(a) - tempLong + count -1)));
+                
                 numeroCarta.setString(to_string(n));
                 numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 150 + 80 * (longitud(a) - tempLong + count - 1)));
                 char cartColor = C[pointer->carta.color];
@@ -291,6 +291,7 @@ void mostrarPila(int a, char t) {
                 else {
                     numeroCarta.setFillColor(sf::Color::Red);
                 }
+                pointer->carta.card = card;
                 window.draw(card);
                 window.draw(numeroCarta);
                 //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
@@ -323,6 +324,7 @@ void mostrarPila(int a, char t) {
                 else {
                     numeroCarta.setFillColor(sf::Color::Red);
                 }
+                pointer->carta.card = card;
                 window.draw(card);
                 window.draw(numeroCarta);
                 //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
@@ -354,6 +356,7 @@ void mostrarPila(int a, char t) {
             else {
                 numeroCarta.setFillColor(sf::Color::Red);
             }
+            pointer->carta.card = card;
             window.draw(card);
             window.draw(numeroCarta);
         }
@@ -366,9 +369,8 @@ void mostrarPila(int a, char t) {
 void mostrarPilas() {
     //Función para mostrar todas las pilas
     //Muestra las pilas del 1 al 7
-    //cout << "Pilas de juego: " << endl;
+    //j: juego , s: salida , r:reserva , d:descarte
     for (int i = 0; i < 7; i++) {
-        //cout << "Pila " << i + 1 << ": ";
         mostrarPila(i,'j');
     }
     //Muestra las pilas del 8 al 11
@@ -438,7 +440,6 @@ Pila* intercambio(Pila* pointer) {
 
 
 /*
-  a: 1,2,3. Donde cada numero es la opción a realizar.
   b: de donde se va extraer.
   c: a donde se va llevar.
   d: cuantas cartas vamos a mover.
@@ -968,6 +969,7 @@ void juego() {
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setFramerateLimit(60);
     bool twoWin = false;
+    sf::Mouse myMouse;
     /*cout << "\n\nElija una de las opciones: " << endl;
     cout << "\n1.-Mover una carta.";
     cout << "\n2.-Mover varias cartas.";
@@ -979,6 +981,8 @@ void juego() {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+           
+
             if (event.type == sf::Event::KeyReleased) {
                 if ((event.key.code == sf::Keyboard::Numpad1 || event.key.code == sf::Keyboard::Num1) && !twoWin) {
                     twoWin = true;
@@ -1009,8 +1013,13 @@ void juego() {
                     twoWin = true;
                     HelpWindow();
                 }
+                
+            }
+            if (PILA[7]->carta.card.getGlobalBounds().contains(myMouse.getPosition(window).x, myMouse.getPosition(window).y)) {
+                cout << "estoy dentro de la pila 8";
             }
         }
+        
         window.clear(sf::Color(15, 185, 74, 255));
         mostrarPilas();
         /*cout << "\n\nElija una de las opciones: " << endl;
