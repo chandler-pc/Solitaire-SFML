@@ -942,6 +942,53 @@ void HelpWindow() {
         helpWindow.display();
     }
 }
+void InfoWindow() {
+    sf::Image icon;
+    icon.loadFromFile("./help.png");
+    helpWindow.create(sf::VideoMode(600, 300), "Ayuda", sf::Style::Close);
+    helpWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    helpWindow.setFramerateLimit(60);
+    sf::Text infoText1, infoText2, infoText3, infoText4, infoText5, infoText6, infoText7, infoText8, infoTextTitulo;
+    infoText1.setFont(letra); infoText2.setFont(letra); infoText3.setFont(letra);
+    infoText4.setFont(letra); infoText5.setFont(letra); infoText6.setFont(letra);
+    infoText7.setFont(letra); infoText8.setFont(letra); infoTextTitulo.setFont(letra);
+    infoText1.setCharacterSize(21); infoText2.setCharacterSize(21); infoText3.setCharacterSize(21);
+    infoText4.setCharacterSize(21); infoText5.setCharacterSize(21); infoText6.setCharacterSize(21);
+    infoText7.setCharacterSize(21); infoText8.setCharacterSize(21); infoTextTitulo.setCharacterSize(30);
+    infoTextTitulo.setFillColor(sf::Color(0,0,0));
+    infoTextTitulo.setString("JUEGO EL SOLITARIO");
+    infoText1.setString("Hay 7 pilas de juego, en estas solo se pueden colocar cartas que ");
+    infoText2.setString("formen una secuencia decreciente consecutiva y de colores alternantes");
+    infoText3.setString("1 Pila de reserva y de descarte, de la cual podemos tomar una carta");
+    infoText4.setString("de la pila de Reserva, una por cada vez y moverla a las pilas de juego");
+    infoText5.setString("o a las Pilas de Salida. 4 Pilas de Salida, en estas pilas se iran");
+    infoText6.setString("apilando cada carta de un mismo palo. Si se logra llenar cada una de");
+    infoText7.setString("las 13 cartas de un mismo palo en cada pila de salida, se gana el juego,");
+    infoText8.setString(" y se pierde cuando no se puede hacer ningun movimiento.");
+    infoTextTitulo.setPosition(190, 10);
+    infoText1.setPosition(10, 50); infoText2.setPosition(10, 81); infoText3.setPosition(10, 112);
+    infoText4.setPosition(10, 143); infoText5.setPosition(10, 174); infoText6.setPosition(10, 205);
+    infoText7.setPosition(10, 236);
+    while (helpWindow.isOpen()) {
+        sf::Event helpEvent;
+        while (helpWindow.pollEvent(helpEvent)) {
+            if (helpEvent.type == sf::Event::Closed) {
+                helpWindow.close();
+            }
+        }
+        helpWindow.clear(sf::Color(118, 178, 146, 255));
+        helpWindow.draw(infoTextTitulo);
+        helpWindow.draw(infoText1);
+        helpWindow.draw(infoText2);
+        helpWindow.draw(infoText3);
+        helpWindow.draw(infoText4);
+        helpWindow.draw(infoText5);
+        helpWindow.draw(infoText6);
+        helpWindow.draw(infoText7);
+        helpWindow.display();
+    }
+}
+
 
 void juego() {
     //Mostrar el juego
