@@ -979,7 +979,8 @@ void InfoWindow() {
 }
 void GameWindow() {
     music.openFromFile("music.ogg");
-    music.setVolume(0.5f);
+    music.setLoop(true);
+    music.setVolume(1);
     music.play();
     //Inicializamos, barajeamos y repartimos las cartas
     inicializarCartas();
