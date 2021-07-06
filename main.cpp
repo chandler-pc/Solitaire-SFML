@@ -1,9 +1,10 @@
-//Para una óptima visualización se recomiendo una pantalla de al menos 900 pixeles de altura
-#include<iostream>
+//Para una óptima visualización se recomienda una pantalla de al menos 850 pixeles de altura
+#include <iostream>
 #include <stdlib.h>
 #include <time.h>
-#include <SFML/Graphics.hpp>
 #include <sstream>
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 using namespace std;
 //Constantes:
 const int N_Cartas = 52;
@@ -38,6 +39,7 @@ sf::Texture TCard;
 sf::Texture CCard;
 sf::Texture TempCard;
 sf::Texture emptyTexture;
+sf::Texture exitDoor;
 sf::Font letra;
 sf::Text numeroCarta;
 sf::Text help;
@@ -47,7 +49,8 @@ sf::RenderWindow moreCardWindow;
 sf::RenderWindow window;
 sf::RenderWindow mainWindow;
 sf::RectangleShape MakeBtn(float x, float y, sf::Color color, float posX, float posY);
-sf::RectangleShape MakeTxtBox(float x, float y, float posX, float posY); 
+sf::RectangleShape MakeTxtBox(float x, float y, float posX, float posY);
+sf::Music music;
 void JugadaNoValidaVentana();
 void OneCardWindow();
 void MoreCardWindow(); 
@@ -931,7 +934,7 @@ void HelpWindow() {
 void InfoWindow() {
     sf::Image icon;
     icon.loadFromFile("./help.png");
-    helpWindow.create(sf::VideoMode(600, 300), "Ayuda", sf::Style::Close);
+    helpWindow.create(sf::VideoMode(600, 300), "Info", sf::Style::Close);
     helpWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     helpWindow.setFramerateLimit(60);
     sf::Text infoText1, infoText2, infoText3, infoText4, infoText5, infoText6, infoText7, infoText8, infoTextTitulo;
@@ -975,6 +978,9 @@ void InfoWindow() {
     }
 }
 void GameWindow() {
+    music.openFromFile("music.ogg");
+    music.setVolume(0.5f);
+    music.play();
     //Inicializamos, barajeamos y repartimos las cartas
     inicializarCartas();
     barajear();
@@ -1026,23 +1032,56 @@ void GameWindow() {
         twoWin = false;
         window.draw(help);
         window.display();
+        if (gano() != 0) {
+            break;
+        }
     }
 }
 void MainWindow() {
     sf::Image icon;
     icon.loadFromFile("./iconCard.png");
-    mainWindow.create(sf::VideoMode(800, 800), "Solitaire Menu", sf::Style::Close);
+    mainWindow.create(sf::VideoMode(600, 600), "Solitaire Menu", sf::Style::Close);
     mainWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    sf::Text tittle;
+    tittle.setFont(letra);
+    tittle.setCharacterSize(100);
+    tittle.setString("Solitaire SFML");
+    tittle.setPosition(57.5,0);
+    tittle.setFillColor(sf::Color::Black);
     sf::RectangleShape btnPlay;
     btnPlay.setSize(sf::Vector2f(250, 140));
-    btnPlay.setPosition(sf::Vector2f(275,255));
+    btnPlay.setPosition(sf::Vector2f(175,205));
     btnPlay.setFillColor(sf::Color::Transparent);
     sf::Text txtPlay;
     txtPlay.setFont(letra);
     txtPlay.setString("Play");
     txtPlay.setCharacterSize(100);
-    txtPlay.setPosition(325, 250);
+    txtPlay.setPosition(225, 200);
+    sf::RectangleShape btnInfo;
+    btnInfo.setSize(sf::Vector2f(250, 140));
+    btnInfo.setPosition(sf::Vector2f(175, 355));
+    btnInfo.setFillColor(sf::Color::Transparent);
+    sf::Text txtInfo;
+    txtInfo.setFont(letra);
+    txtInfo.setString("Info");
+    txtInfo.setCharacterSize(100);
+    txtInfo.setPosition(237, 350);
     sf::Mouse myMouse;
+    exitDoor.loadFromFile("./exit_door.png");
+    sf::RectangleShape exit;
+    exit.setTexture(&exitDoor);
+    exit.setSize(sf::Vector2f(80,80));
+    exit.setPosition(510, 510);
+    sf::RectangleShape exitRect;
+    exitRect.setSize(sf::Vector2f(80, 80));
+    exitRect.setPosition(510, 510);
+    exitRect.setFillColor(sf::Color::Transparent);
+    sf::Text txtExit;
+    txtExit.setFillColor(sf::Color::Transparent);
+    txtExit.setCharacterSize(30);
+    txtExit.setString("Exit");
+    txtExit.setFont(letra);
+    txtExit.setPosition(531.5, 470);
     while (mainWindow.isOpen()) {
         sf::Event evnt;
         while (mainWindow.pollEvent(evnt)) {
@@ -1066,10 +1105,50 @@ void MainWindow() {
             else {
                 btnPlay.setFillColor(sf::Color::Transparent);
             }
+            if (btnInfo.getGlobalBounds().contains(sf::Vector2f(myMouse.getPosition(mainWindow).x, myMouse.getPosition(mainWindow).y))) {
+                if (evnt.type == sf::Event::MouseButtonReleased) {
+                    if (evnt.mouseButton.button == myMouse.Left) {
+                        InfoWindow();
+                    }
+                }
+                if (myMouse.isButtonPressed(sf::Mouse::Left)) {
+                    btnInfo.setFillColor(sf::Color(26, 66, 32, 255));
+                }
+                else {
+                    btnInfo.setFillColor(sf::Color(73, 123, 85, 255));
+                }
+            }
+            else {
+                btnInfo.setFillColor(sf::Color::Transparent);
+            }
+            if (exitRect.getGlobalBounds().contains(sf::Vector2f(myMouse.getPosition(mainWindow).x, myMouse.getPosition(mainWindow).y))) {
+                if (evnt.type == sf::Event::MouseButtonReleased) {
+                    if (evnt.mouseButton.button == myMouse.Left) {
+                        mainWindow.close();
+                    }
+                }
+                if (myMouse.isButtonPressed(sf::Mouse::Left)) {
+                    exitRect.setFillColor(sf::Color(26, 66, 32, 255));
+                }
+                else {
+                    exitRect.setFillColor(sf::Color(73, 123, 85, 255));
+                }
+                txtExit.setFillColor(sf::Color::Black);
+            }
+            else {
+                exitRect.setFillColor(sf::Color::Transparent);
+                txtExit.setFillColor(sf::Color::Transparent);
+            }
         }
         mainWindow.clear(sf::Color(15, 185, 74, 255));
         mainWindow.draw(btnPlay);
         mainWindow.draw(txtPlay);
+        mainWindow.draw(btnInfo);
+        mainWindow.draw(txtInfo);
+        mainWindow.draw(tittle);
+        mainWindow.draw(exitRect);
+        mainWindow.draw(exit);
+        mainWindow.draw(txtExit);
         mainWindow.display();
     }
 }
@@ -1079,5 +1158,7 @@ void MainWindow() {
 void juego() {
     letra.loadFromFile("PumpkinPancakes.ttf");
     MainWindow();
-    //cout << "Felicidades ganaste" << endl;
+    if (gano() != 0) {
+        //WinWindow();
+    }
 }
