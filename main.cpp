@@ -45,13 +45,14 @@ sf::RenderWindow helpWindow;
 sf::RenderWindow oneCardWindow;
 sf::RenderWindow moreCardWindow;
 sf::RenderWindow window;
+sf::RenderWindow mainWindow;
 sf::RectangleShape MakeBtn(float x, float y, sf::Color color, float posX, float posY);
 sf::RectangleShape MakeTxtBox(float x, float y, float posX, float posY); 
 void JugadaNoValidaVentana();
 void OneCardWindow();
 void MoreCardWindow(); 
 void HelpWindow();
-//Variables para el funcionamiento correcto de las ventas
+//Variables para el funcionamiento correcto de las ventanas
 string s1 = "", s2 = "", s3 = "";
 bool oneWinTbSel = true;
 int moreWinTbSel = 0;
@@ -293,7 +294,6 @@ void mostrarPila(int a, char t) {
                 }
                 window.draw(card);
                 window.draw(numeroCarta);
-                //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
                 pointer = pointer->siguiente;
             }
             //cout << endl;
@@ -325,7 +325,6 @@ void mostrarPila(int a, char t) {
                 }
                 window.draw(card);
                 window.draw(numeroCarta);
-                //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
                 pointer = pointer->siguiente;
             }
             //cout << endl;
@@ -365,25 +364,13 @@ void mostrarPila(int a, char t) {
 
 void mostrarPilas() {
     //Función para mostrar todas las pilas
-    //Muestra las pilas del 1 al 7
-    //cout << "Pilas de juego: " << endl;
     for (int i = 0; i < 7; i++) {
-        //cout << "Pila " << i + 1 << ": ";
         mostrarPila(i,'j');
     }
-    //Muestra las pilas del 8 al 11
-    //cout << "\nPilas de salida: " << endl;
     for (int i = 7; i < 11; i++) {
-        //cout << "Pila " << i + 1 << ": ";
         mostrarPila(i,'s');
     }
-    //Muestra la pila 12 y 13 (reserva y descarte)
-    /*cout << "\nPila de reserva: " << endl;
-    cout << "Pila " << 12 << ": " << "[**]" << endl;*/
     mostrarPila(11,'r');
-    /*cout << "Pila de descarte: " << endl;
-    cout << "Pila " << 13 << ": ";
-    cout << PILA[12]->carta.Ncarta << PILA[12]->carta.Palo << "(" << C[PILA[12]->carta.color] << ")";*/
     mostrarPila(12, 'd');
 }
 
@@ -438,7 +425,6 @@ Pila* intercambio(Pila* pointer) {
 
 
 /*
-  a: 1,2,3. Donde cada numero es la opción a realizar.
   b: de donde se va extraer.
   c: a donde se va llevar.
   d: cuantas cartas vamos a mover.
@@ -988,16 +974,11 @@ void InfoWindow() {
         helpWindow.display();
     }
 }
-
-
-void juego() {
-    //Mostrar el juego
-    int a, b, c, d;
+void GameWindow() {
     //Inicializamos, barajeamos y repartimos las cartas
     inicializarCartas();
     barajear();
     repartirCartas();
-    letra.loadFromFile("PumpkinPancakes.ttf");
     numeroCarta.setFont(letra);
     numeroCarta.setCharacterSize(20);
     help.setString("Presiona H para ayuda.");
@@ -1009,16 +990,12 @@ void juego() {
     DCard.loadFromFile("D.png");
     TCard.loadFromFile("T.png");
     CCard.loadFromFile("C.png");
-    window.create(sf::VideoMode(800, 800), "Solitaire Game", sf::Style::Close);
     sf::Image icon;
     icon.loadFromFile("./iconCard.png");
+    window.create(sf::VideoMode(800, 800), "Solitaire Game", sf::Style::Close);
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setFramerateLimit(60);
     bool twoWin = false;
-    /*cout << "\n\nElija una de las opciones: " << endl;
-    cout << "\n1.-Mover una carta.";
-    cout << "\n2.-Mover varias cartas.";
-    cout << "\n3.-Mover la reserva." << endl;*/
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event))
@@ -1029,24 +1006,10 @@ void juego() {
             if (event.type == sf::Event::KeyReleased) {
                 if ((event.key.code == sf::Keyboard::Numpad1 || event.key.code == sf::Keyboard::Num1) && !twoWin) {
                     twoWin = true;
-                    /*int t1 = 0, t2 = 0;
-                    cout << "Escribe la fila de donde sacar la carta : ";cin >> t1;
-                    cout << "Escribe la fila a la cual mover la carta : ";cin >> t2; 
-                    if (jugadaValida(1, t1 - 1, t2 - 1, 1) == 1) {
-                        moverCarta(t1 - 1, t2 - 1);
-                    }
-                    cout << endl;*/
                     OneCardWindow();
                 }
                 if ((event.key.code == sf::Keyboard::Numpad2 || event.key.code == sf::Keyboard::Num2) && !twoWin) {
                     twoWin = true;
-                    /*int t1 = 0, t2 = 0, nc = 0;
-                    cout << "Escribe la fila de donde sacar la carta : "; cin >> t1;
-                    cout << "Escribe la fila a la cual mover la carta : "; cin >> t2;
-                    cout << "Ingrese la cantidad de cartas que desea mover: "; cin >> nc;
-                    if (jugadaValida(2, t1 - 1, t2 - 1, nc) == 1) {
-                        moverVariasCartas(t1 - 1, t2 - 1, nc);
-                    }*/
                     MoreCardWindow();
                 }
                 if ((event.key.code == sf::Keyboard::Numpad3 || event.key.code == sf::Keyboard::Num3)) {
@@ -1060,42 +1023,61 @@ void juego() {
         }
         window.clear(sf::Color(15, 185, 74, 255));
         mostrarPilas();
-        /*cout << "\n\nElija una de las opciones: " << endl;
-        cout << "\n1.-Mover una carta.";
-        cout << "\n2.-Mover varias cartas.";
-        cout << "\n3.-Mover la reserva." << endl;
-        system("cls");*/
         twoWin = false;
         window.draw(help);
         window.display();
-        /*cout << "\n\nElija una de las opciones: " << endl;
-        cout << "\n1.-Mover una carta.";
-        cout << "\n2.-Mover varias cartas.";
-        cout << "\n3.-Mover la reserva." << endl;
-        cin >> a;
-        if (a == 1) {
-            d = 1;
-            cout << "Ingrese la pila de donde sacara la carta: "; cin >> b;
-            cout << "Ingrese la pila de llegada de la carta: "; cin >> c;
-            if (jugadaValida(a, b - 1, c - 1, d) == 1) {
-                moverCarta(b - 1, c - 1);
-            }
-        }
-        else if (a == 2) {
-            cout << "Ingrese la pila de donde sacara la carta: "; cin >> b;
-            cout << "Ingrese la pila de llegada de la carta: "; cin >> c;
-            cout << "Ingrese el numero de cartas que desea mover: "; cin >> d;
-            if (jugadaValida(a, b - 1, c - 1, d) == 1) {
-                moverVariasCartas(b - 1, c - 1, d);
-            }
-        }
-        else if (a == 3) {
-            moverLareserva();
-        }
-        if (gano() != 0) {
-            break;
-        }
-        cin.get();*/
     }
+}
+void MainWindow() {
+    sf::Image icon;
+    icon.loadFromFile("./iconCard.png");
+    mainWindow.create(sf::VideoMode(800, 800), "Solitaire Menu", sf::Style::Close);
+    mainWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    sf::RectangleShape btnPlay;
+    btnPlay.setSize(sf::Vector2f(250, 140));
+    btnPlay.setPosition(sf::Vector2f(275,255));
+    btnPlay.setFillColor(sf::Color::Transparent);
+    sf::Text txtPlay;
+    txtPlay.setFont(letra);
+    txtPlay.setString("Play");
+    txtPlay.setCharacterSize(100);
+    txtPlay.setPosition(325, 250);
+    sf::Mouse myMouse;
+    while (mainWindow.isOpen()) {
+        sf::Event evnt;
+        while (mainWindow.pollEvent(evnt)) {
+            if (evnt.type == sf::Event::Closed) {
+                mainWindow.close();
+            }
+            if (btnPlay.getGlobalBounds().contains(sf::Vector2f(myMouse.getPosition(mainWindow).x, myMouse.getPosition(mainWindow).y))) {
+                if (evnt.type == sf::Event::MouseButtonReleased) {
+                    if (evnt.mouseButton.button == myMouse.Left) {
+                        mainWindow.close();
+                        GameWindow();
+                    }
+                }
+                if (myMouse.isButtonPressed(sf::Mouse::Left)) {
+                    btnPlay.setFillColor(sf::Color(26, 66, 32, 255));
+                }
+                else {
+                    btnPlay.setFillColor(sf::Color(73, 123, 85, 255));
+                }
+            }
+            else {
+                btnPlay.setFillColor(sf::Color::Transparent);
+            }
+        }
+        mainWindow.clear(sf::Color(15, 185, 74, 255));
+        mainWindow.draw(btnPlay);
+        mainWindow.draw(txtPlay);
+        mainWindow.display();
+    }
+}
+
+
+
+void juego() {
+    letra.loadFromFile("PumpkinPancakes.ttf");
+    MainWindow();
     //cout << "Felicidades ganaste" << endl;
 }

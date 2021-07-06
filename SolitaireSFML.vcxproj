@@ -153,9 +153,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource2.h" />
+    <ClInclude Include="resource3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SolitaireSFML2.rc" />
+    <ResourceCompile Include="SolitaireSFML.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="iconCard.ico" />
