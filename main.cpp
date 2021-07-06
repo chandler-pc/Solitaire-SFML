@@ -88,6 +88,7 @@ void inicializarCartas() {
         //Establecemos el número y el palo
         CARTAS[i].Ncarta = m;
         CARTAS[i].Palo = P[t];
+        CARTAS[i].card.setSize(sf::Vector2f(80, 100));
         //Establecemos su color de acuerdo al i-esimo elemento del vector C[2]
         if (c % 2 == 0) {
             CARTAS[i].color = 1;//Color rojo
@@ -291,7 +292,7 @@ void mostrarPila(int a, char t) {
                 else {
                     numeroCarta.setFillColor(sf::Color::Red);
                 }
-                pointer->carta.card = card;
+                PILA[a]->carta.card = card;
                 window.draw(card);
                 window.draw(numeroCarta);
                 //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
@@ -324,7 +325,7 @@ void mostrarPila(int a, char t) {
                 else {
                     numeroCarta.setFillColor(sf::Color::Red);
                 }
-                pointer->carta.card = card;
+                PILA[a]->carta.card = card;
                 window.draw(card);
                 window.draw(numeroCarta);
                 //cout << pointer->carta.Ncarta << pointer->carta.Palo << "(" << C[pointer->carta.color] << ")";
@@ -356,7 +357,7 @@ void mostrarPila(int a, char t) {
             else {
                 numeroCarta.setFillColor(sf::Color::Red);
             }
-            pointer->carta.card = card;
+            PILA[a]->carta.card = card;
             window.draw(card);
             window.draw(numeroCarta);
         }
@@ -917,7 +918,7 @@ void HelpWindow() {
     sf::Image icon;
     icon.loadFromFile("./help.png");
     helpWindow.create(sf::VideoMode(500, 300), "Ayuda", sf::Style::Close);
-    helpWindow.setIcon(icon.getSize().x,icon.getSize().y, icon.getPixelsPtr());
+    helpWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     helpWindow.setFramerateLimit(60);
     sf::Text helpText1, helpText2, helpText3;
     helpText1.setFont(letra); helpText2.setFont(letra); helpText3.setFont(letra);
@@ -969,26 +970,67 @@ void juego() {
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setFramerateLimit(60);
     bool twoWin = false;
+    bool tarjetaPresionada = false;
+    bool tarjetaColision = false;
+    bool jugadaValida = false;
     sf::Mouse myMouse;
+    sf::RectangleShape partida;
+    sf::Vector2f posicionInicialPartida;
+    sf::RectangleShape llegada;
+
     /*cout << "\n\nElija una de las opciones: " << endl;
     cout << "\n1.-Mover una carta.";
     cout << "\n2.-Mover varias cartas.";
     cout << "\n3.-Mover la reserva." << endl;*/
     while (window.isOpen()) {
         sf::Event event;
+
+
+
+
+
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-           
+            //Mover la reserva
+            sf::RectangleShape temporalReserva;
+            temporalReserva.setPosition(sf::Vector2f(60, 20)); //156 
+            temporalReserva.setSize(sf::Vector2f(80, 100));
+            if (event.type == sf::Event::MouseButtonPressed) {
+                //Mover reserva
+                if (event.type == sf::Event::MouseButtonPressed) {
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        if (temporalReserva.getGlobalBounds().contains(myMouse.getPosition(window).x, myMouse.getPosition(window).y)) {
+                            moverLareserva();
+                        }
+                    }
+                }
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    if (PILA[0]->carta.card.getGlobalBounds().contains(myMouse.getPosition(window).x, myMouse.getPosition(window).y)) {
+                        PILA[0]->carta.card.setOrigin(event.mouseButton.x - (PILA[0]->carta.card.getPosition().x - PILA[0]->carta.card.getOrigin().x),
+                            event.mouseButton.y - (PILA[0]->carta.card.getPosition().y - PILA[0]->carta.card.getOrigin().y));
+                        tarjetaPresionada = true;
+                        cout << "PILA1" << endl;
+                    }
+                }
+            }
+            if (event.type == sf::Event::MouseMoved) {
+                if (tarjetaPresionada) {
+                    PILA[0]->carta.card.setPosition(myMouse.getPosition(window).x, myMouse.getPosition(window).y);
+                }
+            }
 
+            if (event.type == sf::Event::MouseButtonReleased) {
+                tarjetaPresionada = false;
+            }
             if (event.type == sf::Event::KeyReleased) {
                 if ((event.key.code == sf::Keyboard::Numpad1 || event.key.code == sf::Keyboard::Num1) && !twoWin) {
                     twoWin = true;
                     /*int t1 = 0, t2 = 0;
                     cout << "Escribe la fila de donde sacar la carta : ";cin >> t1;
-                    cout << "Escribe la fila a la cual mover la carta : ";cin >> t2; 
+                    cout << "Escribe la fila a la cual mover la carta : ";cin >> t2;
                     if (jugadaValida(1, t1 - 1, t2 - 1, 1) == 1) {
                         moverCarta(t1 - 1, t2 - 1);
                     }
@@ -1006,22 +1048,20 @@ void juego() {
                     }*/
                     MoreCardWindow();
                 }
-                if ((event.key.code == sf::Keyboard::Numpad3 || event.key.code == sf::Keyboard::Num3)) {
+                /*if ((event.key.code == sf::Keyboard::Numpad3 || event.key.code == sf::Keyboard::Num3)) {
                     moverLareserva();
-                }
+                }*/
                 if (event.key.code == sf::Keyboard::H && !twoWin) {
                     twoWin = true;
                     HelpWindow();
                 }
-                
-            }
-            if (PILA[7]->carta.card.getGlobalBounds().contains(myMouse.getPosition(window).x, myMouse.getPosition(window).y)) {
-                cout << "estoy dentro de la pila 8";
+
             }
         }
         
         window.clear(sf::Color(15, 185, 74, 255));
         mostrarPilas();
+        window.draw(PILA[0]->carta.card);
         /*cout << "\n\nElija una de las opciones: " << endl;
         cout << "\n1.-Mover una carta.";
         cout << "\n2.-Mover varias cartas.";
