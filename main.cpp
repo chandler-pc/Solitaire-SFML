@@ -51,6 +51,7 @@ sf::RenderWindow mainWindow;
 sf::RectangleShape MakeBtn(float x, float y, sf::Color color, float posX, float posY);
 sf::RectangleShape MakeTxtBox(float x, float y, float posX, float posY);
 sf::Music music;
+sf::Text minT, secT;
 void JugadaNoValidaVentana();
 void OneCardWindow();
 void MoreCardWindow(); 
@@ -63,7 +64,8 @@ void MainWindow();
 string s1 = "", s2 = "", s3 = "";
 bool oneWinTbSel = true;
 int moreWinTbSel = 0;
-
+time_t iniTime = time(nullptr);
+int hours = 0, minut = 0, sec = 0;
 //Prototipo de todas las funciones que se utilizarán en el programa
 void inicializarCartas();
 void barajear();
@@ -1043,6 +1045,37 @@ void PilaTxt() {
     txt.setPosition(((80 - txt.getGlobalBounds().width) / 2.0f) + 160, 8);
     window.draw(txt);
 }
+void TimeText() {
+    sf::Text twoPoint(":", letra, 40);
+    twoPoint.setPosition(299, 20);
+    minT.setFont(letra); secT.setFont(letra);
+    minT.setCharacterSize(30); secT.setCharacterSize(30);
+    secT.setPosition(305, 30); minT.setPosition(273, 30);
+    int tempTime = time(nullptr) - iniTime;
+    if (tempTime == 60) {
+        minut += 1;
+        sec = 0;
+        iniTime = time(nullptr);
+    }
+    else {
+        sec = tempTime;
+    }
+    if (minut >= 10) {
+        minT.setString(to_string(minut));
+    }
+    else {
+        minT.setString("0" + to_string(minut));
+    }
+    if (sec >= 10) {
+        secT.setString(to_string(sec));
+    }
+    else {
+        secT.setString("0"+to_string(sec));
+    }
+    window.draw(secT);
+    window.draw(minT);
+    window.draw(twoPoint);
+}
 void GameWindow() {
     music.openFromFile("music.ogg");
     music.setLoop(true);
@@ -1081,8 +1114,8 @@ void GameWindow() {
     configMusic.setSize(sf::Vector2f(32, 32));
     configMusic.setTexture(&textureMusic);
     float contador_volumen = 1;
-
     bool twoWin = false;
+    iniTime = time(nullptr);
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event))
@@ -1093,7 +1126,7 @@ void GameWindow() {
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     if (configMusic.getGlobalBounds().contains(sf::Mouse().getPosition(window).x, sf::Mouse().getPosition(window).y)) {
-                        if (contador_volumen <= 29) {
+                        if (contador_volumen <= 9) {
                             contador_volumen++;
                             music.setVolume(contador_volumen);
                             textMusic.setString(std::to_string((int)contador_volumen));
@@ -1132,6 +1165,7 @@ void GameWindow() {
         window.draw(help);
         window.draw(configMusic);
         PilaTxt();
+        TimeText();
         window.display();
         if (gano() != 0) {
             break;
