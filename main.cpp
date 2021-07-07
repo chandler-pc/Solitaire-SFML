@@ -977,6 +977,48 @@ void InfoWindow() {
         helpWindow.display();
     }
 }
+void WinnerWindow() {
+    sf::Image icon;
+    icon.loadFromFile("./winner.png");
+    helpWindow.create(sf::VideoMode(500, 300), "Felicidades", sf::Style::Close);
+    helpWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    helpWindow.setFramerateLimit(60);
+    sf::Text infoTextTitulo;
+    sf::RectangleShape winner;
+    sf::RectangleShape poker;
+    sf::RectangleShape poker2;
+    sf::Texture texturePoker;
+    sf::Texture texturaWinner;
+    texturePoker.loadFromFile("./pokerchip.png");
+    texturaWinner.loadFromFile("./winner.png");
+    winner.setSize(sf::Vector2f(128, 128));
+    winner.setPosition(186, 86);
+    winner.setTexture(&texturaWinner);
+    poker.setSize(sf::Vector2f(64, 64));
+    poker.setPosition(61, 118);
+    poker.setTexture(&texturePoker);
+    infoTextTitulo.setFont(letra);
+    infoTextTitulo.setCharacterSize(40);
+    infoTextTitulo.setFillColor(sf::Color(0, 0, 0));
+    infoTextTitulo.setString("¡ FELICIDADES !");
+    infoTextTitulo.setPosition(145, 15);
+    poker2 = poker;
+    poker2.setPosition(375, 118);
+    while (helpWindow.isOpen()) {
+        sf::Event helpEvent;
+        while (helpWindow.pollEvent(helpEvent)) {
+            if (helpEvent.type == sf::Event::Closed) {
+                helpWindow.close();
+            }
+        }
+        helpWindow.clear(sf::Color(118, 178, 146, 255));
+        helpWindow.draw(winner);
+        helpWindow.draw(poker);
+        helpWindow.draw(poker2);
+        helpWindow.draw(infoTextTitulo);
+        helpWindow.display();
+    }
+}
 void GameWindow() {
     music.openFromFile("music.ogg");
     music.setLoop(true);
@@ -1153,13 +1195,10 @@ void MainWindow() {
         mainWindow.display();
     }
 }
-
-
-
 void juego() {
     letra.loadFromFile("PumpkinPancakes.ttf");
     MainWindow();
     if (gano() != 0) {
-        //WinWindow();
+        WinnerWindow();
     }
 }
