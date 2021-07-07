@@ -1022,7 +1022,7 @@ void WinnerWindow() {
 void GameWindow() {
     music.openFromFile("music.ogg");
     music.setLoop(true);
-    music.setVolume(1);
+    music.setVolume(0.5f);
     music.play();
     //Inicializamos, barajeamos y repartimos las cartas
     inicializarCartas();
