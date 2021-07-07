@@ -269,7 +269,7 @@ void mostrarPila(int a, char t) {
             //Imprime las cartas que no están en el tope
             for (int i = 0; i < asteriscos[a]; i++) {
                 //cout << "[**]";
-                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 80 * i));
+                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 60 * i));
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Black);
                 card.setTexture(&reverseCard);
@@ -289,9 +289,9 @@ void mostrarPila(int a, char t) {
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Red);
                 card.setTexture(&TempCard);
-                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 80 * (longitud(a) - tempLong + count -1)));
+                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 60 * (longitud(a) - tempLong + count -1)));
                 numeroCarta.setString(to_string(n));
-                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 180 + 80 * (longitud(a) - tempLong + count - 1)));
+                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 180 + 60 * (longitud(a) - tempLong + count - 1)));
                 char cartColor = C[pointer->carta.color];
                 if (cartColor == 'N') {
                     numeroCarta.setFillColor(sf::Color::Black);
@@ -503,7 +503,7 @@ int jugadaValida(int b, int c, int d) {
             }
             else {  //si la longitud mayor a 0
              //deben ser consecutivas y mismo color
-                if (PILA[b]->carta.Ncarta - 1 != PILA[c]->carta.Ncarta || PILA[b]->carta.color != PILA[c]->carta.color) {
+                if (PILA[b]->carta.Ncarta - 1 != PILA[c]->carta.Ncarta || PILA[b]->carta.color != PILA[c]->carta.color || PILA[b]->carta.Palo != PILA[c]->carta.Palo) {
                     valor = 0;
                 }
             }
@@ -1026,7 +1026,7 @@ void WinnerWindow() {
 void PilaTxt() {
     sf::Text txt;
     txt.setFont(letra);
-    txt.setCharacterSize(30);
+    txt.setCharacterSize(25);
     txt.setFillColor(sf::Color::Black);
     for (int i = 0; i < 7; i++) {
         txt.setString("Pila "+ to_string(i+1));
@@ -1056,7 +1056,7 @@ void GameWindow() {
     help.setString("Presiona H para ayuda.");
     help.setFont(letra);
     help.setCharacterSize(30);
-    help.setPosition(sf::Vector2f(20, 750));
+    help.setPosition(sf::Vector2f(20, 770));
     reverseCard.loadFromFile("reverse.png");
     ECard.loadFromFile("E.png");
     DCard.loadFromFile("D.png");
@@ -1064,7 +1064,7 @@ void GameWindow() {
     CCard.loadFromFile("C.png");
     sf::Image icon;
     icon.loadFromFile("./iconCard.png");
-    window.create(sf::VideoMode(800, 800), "Solitaire Game", sf::Style::Close);
+    window.create(sf::VideoMode(800, 820), "Solitaire Game", sf::Style::Close);
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setFramerateLimit(60);
     bool twoWin = false;
