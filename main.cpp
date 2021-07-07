@@ -1046,7 +1046,7 @@ void PilaTxt() {
 void GameWindow() {
     music.openFromFile("music.ogg");
     music.setLoop(true);
-    music.setVolume(0.5f);
+    music.setVolume(1);
     music.play();
     //Inicializamos, barajeamos y repartimos las cartas
     inicializarCartas();
@@ -1068,6 +1068,20 @@ void GameWindow() {
     window.create(sf::VideoMode(800, 820), "Solitaire Game", sf::Style::Close);
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setFramerateLimit(60);
+    sf::RectangleShape configMusic;
+    sf::Texture textureMusic;
+    sf::Text textMusic;
+    textMusic.setString("1");
+    textMusic.setFont(letra);
+    textMusic.setCharacterSize(32);
+    textMusic.setPosition(sf::Vector2f(44, 0));
+    textMusic.setFillColor(sf::Color::Black);
+    textureMusic.loadFromFile("volume.png");
+    configMusic.setPosition(7, 7);
+    configMusic.setSize(sf::Vector2f(32, 32));
+    configMusic.setTexture(&textureMusic);
+    float contador_volumen = 1;
+
     bool twoWin = false;
     while (window.isOpen()) {
         sf::Event event;
@@ -1075,6 +1089,23 @@ void GameWindow() {
         {
             if (event.type == sf::Event::Closed) {
                 window.close();
+            }
+            if (event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    if (configMusic.getGlobalBounds().contains(sf::Mouse().getPosition(window).x, sf::Mouse().getPosition(window).y)) {
+                        if (contador_volumen <= 29) {
+                            contador_volumen++;
+                            music.setVolume(contador_volumen);
+                            textMusic.setString(std::to_string((int)contador_volumen));
+                        }
+                        else {
+                            contador_volumen = 0;
+                            music.setVolume(contador_volumen);
+                            textMusic.setString(std::to_string((int)contador_volumen));
+                        }
+
+                    }
+                }
             }
             if (event.type == sf::Event::KeyReleased) {
                 if ((event.key.code == sf::Keyboard::Numpad1 || event.key.code == sf::Keyboard::Num1) && !twoWin) {
@@ -1097,7 +1128,9 @@ void GameWindow() {
         window.clear(sf::Color(15, 185, 74, 255));
         mostrarPilas();
         twoWin = false;
+        window.draw(textMusic);
         window.draw(help);
+        window.draw(configMusic);
         PilaTxt();
         window.display();
         if (gano() != 0) {
