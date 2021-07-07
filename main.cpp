@@ -55,6 +55,10 @@ void JugadaNoValidaVentana();
 void OneCardWindow();
 void MoreCardWindow(); 
 void HelpWindow();
+void InfoWindow();
+void WinnerWindow();
+void GameWindow();
+void MainWindow();
 //Variables para el funcionamiento correcto de las ventanas
 string s1 = "", s2 = "", s3 = "";
 bool oneWinTbSel = true;
@@ -239,7 +243,7 @@ void mostrarPila(int a, char t) {
             emptyTexture.create(80, 100);
             card.setOutlineThickness(1.0f);
             card.setOutlineColor(sf::Color::White);
-            card.setPosition(sf::Vector2f(60 + 100 * (a - 4), 20));
+            card.setPosition(sf::Vector2f(60 + 100 * (a - 4), 40));
             card.setTexture(&emptyTexture);
             window.draw(card);
         }
@@ -247,12 +251,12 @@ void mostrarPila(int a, char t) {
             emptyTexture.create(80, 100);
             card.setOutlineThickness(1.0f);
             card.setOutlineColor(sf::Color::White);
-            card.setPosition(sf::Vector2f(60 + 100 * a, 150));
+            card.setPosition(sf::Vector2f(60 + 100 * a, 180));
             card.setTexture(&emptyTexture);
             window.draw(card);
         }
         if (t == 'r' && longitud(12)!=0) {
-            card.setPosition(sf::Vector2f(60, 20));
+            card.setPosition(sf::Vector2f(60, 40));
             card.setOutlineThickness(1.0f);
             card.setOutlineColor(sf::Color::Black);
             card.setTexture(&reverseCard);
@@ -265,7 +269,7 @@ void mostrarPila(int a, char t) {
             //Imprime las cartas que no están en el tope
             for (int i = 0; i < asteriscos[a]; i++) {
                 //cout << "[**]";
-                card.setPosition(sf::Vector2f(60 + 100 * a, 150 + 80 * i));
+                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 80 * i));
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Black);
                 card.setTexture(&reverseCard);
@@ -285,9 +289,9 @@ void mostrarPila(int a, char t) {
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Red);
                 card.setTexture(&TempCard);
-                card.setPosition(sf::Vector2f(60 + 100 * a, 150 + 80 * (longitud(a) - tempLong + count -1)));
+                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 80 * (longitud(a) - tempLong + count -1)));
                 numeroCarta.setString(to_string(n));
-                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 150 + 80 * (longitud(a) - tempLong + count - 1)));
+                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 180 + 80 * (longitud(a) - tempLong + count - 1)));
                 char cartColor = C[pointer->carta.color];
                 if (cartColor == 'N') {
                     numeroCarta.setFillColor(sf::Color::Black);
@@ -317,9 +321,9 @@ void mostrarPila(int a, char t) {
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Black);
                 card.setTexture(&TempCard);
-                card.setPosition(sf::Vector2f(60 + 100 * (a - 4), 20));
+                card.setPosition(sf::Vector2f(60 + 100 * (a - 4), 40));
                 numeroCarta.setString(to_string(n));
-                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * (a - 4), 20));
+                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 102 * (a - 4), 40));
                 if (cartColor == 'N') {
                     numeroCarta.setFillColor(sf::Color::Black);
                 }
@@ -346,9 +350,9 @@ void mostrarPila(int a, char t) {
             card.setOutlineThickness(1.0f);
             card.setOutlineColor(sf::Color::Red);
             card.setTexture(&TempCard);
-            card.setPosition(sf::Vector2f(160, 20));
+            card.setPosition(sf::Vector2f(160, 40));
             numeroCarta.setString(to_string(n));
-            numeroCarta.setPosition(sf::Vector2f(165,20));
+            numeroCarta.setPosition(sf::Vector2f(165,40));
             char cartColor = C[pointer->carta.color];
             if (cartColor == 'N') {
                 numeroCarta.setFillColor(sf::Color::Black);
@@ -1019,6 +1023,25 @@ void WinnerWindow() {
         helpWindow.display();
     }
 }
+void PilaTxt() {
+    sf::Text txt;
+    txt.setFont(letra);
+    txt.setCharacterSize(30);
+    txt.setFillColor(sf::Color::Black);
+    for (int i = 0; i < 7; i++) {
+        txt.setString("Pila "+ to_string(i+1));
+        txt.setPosition(((80-txt.getGlobalBounds().width)/2.0f)+60 + 100 *i , 148);
+        window.draw(txt);
+    }
+    for (int i = 7; i < 11; i++) {
+        txt.setString("Pila " + to_string(i + 1));
+        txt.setPosition(((80 - txt.getGlobalBounds().width) / 2.0f) + 60 + 100 * (i-4), 8);
+        window.draw(txt);
+    }
+    txt.setString("Pila 13");
+    txt.setPosition(((80 - txt.getGlobalBounds().width) / 2.0f) + 160, 8);
+    window.draw(txt);
+}
 void GameWindow() {
     music.openFromFile("music.ogg");
     music.setLoop(true);
@@ -1074,6 +1097,7 @@ void GameWindow() {
         mostrarPilas();
         twoWin = false;
         window.draw(help);
+        PilaTxt();
         window.display();
         if (gano() != 0) {
             break;
