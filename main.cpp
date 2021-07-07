@@ -237,10 +237,11 @@ void mostrarPila(int a, char t) {
     Pila* pointer = PILA[a];
     pointer = intercambio(pointer);
     int count = 0;
+    emptyTexture.create(80, 100);
+    emptyTexture.loadFromFile("./empty.png");
     if (longitud(a) == 0) {
         if (t == 's') {
-            //
-            emptyTexture.create(80, 100);
+            emptyTexture.loadFromFile("./empty.png");
             card.setOutlineThickness(1.0f);
             card.setOutlineColor(sf::Color::White);
             card.setPosition(sf::Vector2f(60 + 100 * (a - 4), 40));
@@ -248,7 +249,7 @@ void mostrarPila(int a, char t) {
             window.draw(card);
         }
         if (t == 'j') {
-            emptyTexture.create(80, 100);
+            emptyTexture.loadFromFile("./empty.png");
             card.setOutlineThickness(1.0f);
             card.setOutlineColor(sf::Color::White);
             card.setPosition(sf::Vector2f(60 + 100 * a, 180));
