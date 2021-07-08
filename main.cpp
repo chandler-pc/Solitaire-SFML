@@ -42,6 +42,8 @@ sf::Texture emptyTexture;
 sf::Texture exitDoor;
 sf::Font letra;
 sf::Text numeroCarta;
+sf::RectangleShape tipoCarta;
+sf::Texture textureTipoCarta;
 sf::Text help;
 sf::RenderWindow helpWindow;
 sf::RenderWindow oneCardWindow;
@@ -272,7 +274,7 @@ void mostrarPila(int a, char t) {
             //Imprime las cartas que no están en el tope
             for (int i = 0; i < asteriscos[a]; i++) {
                 //cout << "[**]";
-                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 60 * i));
+                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 30 * i));
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Black);
                 card.setTexture(&reverseCard);
@@ -285,16 +287,22 @@ void mostrarPila(int a, char t) {
                 count++;
                 char x = pointer->carta.Palo;
                 int n = pointer->carta.Ncarta;
-                ostringstream auxstr;
+                ostringstream auxstr,auxstr2;
                 auxstr << x << ".png";
+                auxstr2 << x << "I" << ".png";
                 string texture = auxstr.str();
+                string texture2 = auxstr2.str();
                 TempCard.loadFromFile(texture);
                 card.setOutlineThickness(1.0f);
                 card.setOutlineColor(sf::Color::Red);
                 card.setTexture(&TempCard);
-                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 60 * (longitud(a) - tempLong + count -1)));
+                card.setPosition(sf::Vector2f(60 + 100 * a, 180 + 30 * (longitud(a) - tempLong + count -1)));
                 numeroCarta.setString(to_string(n));
-                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 180 + 60 * (longitud(a) - tempLong + count - 1)));
+                numeroCarta.setPosition(sf::Vector2f(5 + 60 + 100 * a, 180 + 30 * (longitud(a) - tempLong + count - 1)));
+                tipoCarta.setSize(sf::Vector2f(16,16));
+                textureTipoCarta.loadFromFile(texture2);
+                tipoCarta.setTexture(&textureTipoCarta);
+                tipoCarta.setPosition(sf::Vector2f(60 + 60 + 100 * a, 183 + 30 * (longitud(a) - tempLong + count - 1)));
                 char cartColor = C[pointer->carta.color];
                 if (cartColor == 'N') {
                     numeroCarta.setFillColor(sf::Color::Black);
@@ -303,6 +311,7 @@ void mostrarPila(int a, char t) {
                     numeroCarta.setFillColor(sf::Color::Red);
                 }
                 window.draw(card);
+                window.draw(tipoCarta);
                 window.draw(numeroCarta);
                 pointer = pointer->siguiente;
             }
@@ -334,6 +343,7 @@ void mostrarPila(int a, char t) {
                     numeroCarta.setFillColor(sf::Color::Red);
                 }
                 window.draw(card);
+                
                 window.draw(numeroCarta);
                 pointer = pointer->siguiente;
             }
@@ -1097,7 +1107,7 @@ void GameWindow() {
     help.setString("Presiona H para ayuda.");
     help.setFont(letra);
     help.setCharacterSize(30);
-    help.setPosition(sf::Vector2f(20, 770));
+    help.setPosition(sf::Vector2f(20, 750));
     reverseCard.loadFromFile("reverse.png");
     ECard.loadFromFile("E.png");
     DCard.loadFromFile("D.png");
@@ -1105,7 +1115,7 @@ void GameWindow() {
     CCard.loadFromFile("C.png");
     sf::Image icon;
     icon.loadFromFile("./iconCard.png");
-    window.create(sf::VideoMode(800, 820), "Solitaire Game", sf::Style::Close);
+    window.create(sf::VideoMode(800, 800), "Solitaire Game", sf::Style::Close);
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setFramerateLimit(60);
     sf::RectangleShape configMusic;
