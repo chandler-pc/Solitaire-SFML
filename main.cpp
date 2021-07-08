@@ -5,6 +5,7 @@
 #include <sstream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "json.hpp"
 using namespace std;
 //Constantes:
 const int N_Cartas = 52;
@@ -72,6 +73,7 @@ bool oneWinTbSel = true;
 int moreWinTbSel = 0;
 time_t iniTime = time(nullptr);
 int hours = 0, minut = 0, sec = 0;
+int totalSec = 0;
 //Prototipo de todas las funciones que se utilizarán en el programa
 void inicializarCartas();
 void barajear();
@@ -999,6 +1001,8 @@ void InfoWindow() {
     }
 }
 void WinnerWindow() {
+    totalSec = sec + minut * 60;
+    cout << totalSec << endl;
     sf::Image icon;
     icon.loadFromFile("./winner.png");
     helpWindow.create(sf::VideoMode(500, 300), "Felicidades", sf::Style::Close);
@@ -1333,6 +1337,7 @@ void juego() {
     letra.loadFromFile("PumpkinPancakes.ttf");
     MainWindow();
     if (gano() != 0) {
+        music.pause();
         WinnerWindow();
     }
 }
