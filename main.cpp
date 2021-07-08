@@ -67,13 +67,15 @@ void InfoWindow();
 void WinnerWindow();
 void GameWindow();
 void MainWindow();
+void TimeText();
 //Variables para el funcionamiento correcto de las ventanas
 string s1 = "", s2 = "", s3 = "";
 bool oneWinTbSel = true;
 int moreWinTbSel = 0;
 time_t iniTime = time(nullptr);
 int hours = 0, minut = 0, sec = 0;
-int totalSec = 0;
+int totalSec = 0; 
+int tempTime = 0;
 //Prototipo de todas las funciones que se utilizarán en el programa
 void inicializarCartas();
 void barajear();
@@ -1075,15 +1077,9 @@ void TimeText() {
     minT.setCharacterSize(30); secT.setCharacterSize(30);
     secT.setPosition(305, 80); minT.setPosition(273, 80);
     timeRect.setPosition(282,48);
-    int tempTime = time(nullptr) - iniTime;
-    if (tempTime == 60) {
-        minut += 1;
-        sec = 0;
-        iniTime = time(nullptr);
-    }
-    else {
-        sec = tempTime;
-    }
+    tempTime = time(nullptr) - iniTime;
+    minut = tempTime / 60;
+    sec = tempTime % 60;
     if (minut >= 10) {
         minT.setString(to_string(minut));
     }
@@ -1249,6 +1245,7 @@ void MainWindow() {
     txtExit.setString("Exit");
     txtExit.setFont(letra);
     txtExit.setPosition(531.5, 470);
+    mainWindow.setFramerateLimit(60);
     while (mainWindow.isOpen()) {
         sf::Event evnt;
         while (mainWindow.pollEvent(evnt)) {
