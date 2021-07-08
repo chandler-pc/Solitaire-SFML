@@ -54,6 +54,10 @@ sf::RectangleShape MakeBtn(float x, float y, sf::Color color, float posX, float 
 sf::RectangleShape MakeTxtBox(float x, float y, float posX, float posY);
 sf::Music music;
 sf::Text minT, secT;
+sf::RectangleShape configMusic;
+sf::Texture textureMusic;
+sf::Text textMusic;
+sf::Text playerName;
 void JugadaNoValidaVentana();
 void OneCardWindow();
 void MoreCardWindow(); 
@@ -1118,9 +1122,6 @@ void GameWindow() {
     window.create(sf::VideoMode(800, 800), "Solitaire Game", sf::Style::Close);
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setFramerateLimit(60);
-    sf::RectangleShape configMusic;
-    sf::Texture textureMusic;
-    sf::Text textMusic;
     textMusic.setString("1");
     textMusic.setFont(letra);
     textMusic.setCharacterSize(32);
@@ -1197,6 +1198,13 @@ void MainWindow() {
     icon.loadFromFile("./iconCard.png");
     mainWindow.create(sf::VideoMode(600, 600), "Solitaire Menu", sf::Style::Close);
     mainWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    sf::RectangleShape playerBox = MakeTxtBox(200, 30, 200, 170);
+    playerBox.setFillColor(sf::Color(186, 243, 247, 255));
+    playerName.setCharacterSize(30);
+    playerName.setString("Player");
+    playerName.setPosition(267.5f, 163);
+    playerName.setFont(letra);
+    string name = "";
     sf::Text tittle;
     tittle.setFont(letra);
     tittle.setCharacterSize(100);
@@ -1294,6 +1302,18 @@ void MainWindow() {
                 exitRect.setFillColor(sf::Color::Transparent);
                 txtExit.setFillColor(sf::Color::Transparent);
             }
+            if (evnt.type == sf::Event::TextEntered) {
+                if (evnt.text.unicode <= 122 && evnt.text.unicode >= 33 && name.size() < 10) {
+                    name += static_cast<char>(evnt.text.unicode);
+                }
+                if (evnt.text.unicode == 8) {
+                    if (name.size() != 0) {
+                        name = name.substr(0, name.size() - 1);
+                    }
+                }
+                playerName.setString(name);
+                playerName.setPosition((600 - playerName.getGlobalBounds().width) / 2.0f, 163);
+            }
         }
         mainWindow.clear(sf::Color(15, 185, 74, 255));
         mainWindow.draw(btnPlay);
@@ -1304,6 +1324,8 @@ void MainWindow() {
         mainWindow.draw(exitRect);
         mainWindow.draw(exit);
         mainWindow.draw(txtExit);
+        mainWindow.draw(playerBox);
+        mainWindow.draw(playerName);
         mainWindow.display();
     }
 }
