@@ -1046,11 +1046,17 @@ void PilaTxt() {
     window.draw(txt);
 }
 void TimeText() {
+    sf::RectangleShape timeRect;
+    sf::Texture timeTexture;
+    timeTexture.loadFromFile("reloj.png");
+    timeRect.setTexture(&timeTexture);
+    timeRect.setSize(sf::Vector2f(32,32));
     sf::Text twoPoint(":", letra, 40);
-    twoPoint.setPosition(299, 20);
+    twoPoint.setPosition(299, 70);
     minT.setFont(letra); secT.setFont(letra);
     minT.setCharacterSize(30); secT.setCharacterSize(30);
-    secT.setPosition(305, 30); minT.setPosition(273, 30);
+    secT.setPosition(305, 80); minT.setPosition(273, 80);
+    timeRect.setPosition(282,48);
     int tempTime = time(nullptr) - iniTime;
     if (tempTime == 60) {
         minut += 1;
@@ -1072,6 +1078,7 @@ void TimeText() {
     else {
         secT.setString("0"+to_string(sec));
     }
+    window.draw(timeRect);
     window.draw(secT);
     window.draw(minT);
     window.draw(twoPoint);
@@ -1155,6 +1162,9 @@ void GameWindow() {
                 if (event.key.code == sf::Keyboard::H && !twoWin) {
                     twoWin = true;
                     HelpWindow();
+                }
+                if ((event.key.code == sf::Keyboard::R)) {
+                    GameWindow();
                 }
             }
         }
