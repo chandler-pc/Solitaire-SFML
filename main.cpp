@@ -1004,10 +1004,9 @@ void InfoWindow() {
 }
 void WinnerWindow() {
     totalSec = sec + minut * 60;
-    cout << totalSec << endl;
     sf::Image icon;
     icon.loadFromFile("./winner.png");
-    helpWindow.create(sf::VideoMode(500, 300), "Felicidades", sf::Style::Close);
+    helpWindow.create(sf::VideoMode(500, 400), "Felicidades", sf::Style::Close);
     helpWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     helpWindow.setFramerateLimit(60);
     sf::Text infoTextTitulo;
@@ -1031,11 +1030,72 @@ void WinnerWindow() {
     infoTextTitulo.setPosition(145, 15);
     poker2 = poker;
     poker2.setPosition(375, 118);
+
+    playerName.setCharacterSize(25);
+    playerName.setString("Your name");
+    playerName.setPosition(150, 250);
+    sf::RectangleShape line(sf::Vector2f(130, 1));
+    line.setFillColor(sf::Color::Black);
+    line.setPosition(140, 280);
+    playerName.setFont(letra);
+    playerName.setFillColor(sf::Color::Black);
+    sf::Text nickname;
+    nickname.setFont(letra);
+    nickname.setCharacterSize(25);
+    nickname.setFillColor(sf::Color(0, 0, 0));
+    nickname.setString("Nickname: ");
+    nickname.setPosition(50, 250);
+    sf::Text score = nickname;
+    sf::Text titleSscore = nickname;
+    score.setString(minT.getString()+":"+secT.getString());
+    score.setPosition(400, 250);
+    titleSscore.setString("Score: ");
+    titleSscore.setPosition(340, 250);
+    string name = "";
+    sf::RectangleShape btnEnviar;
+    btnEnviar.setSize(sf::Vector2f(100, 50));
+    btnEnviar.setPosition(sf::Vector2f(365, 320));
+    btnEnviar.setFillColor(sf::Color::Transparent);
+    sf::Text txtEnviar;
+    txtEnviar.setFont(letra);
+    txtEnviar.setString("Enviar");
+    txtEnviar.setCharacterSize(30);
+    txtEnviar.setPosition(385, 322);
+    
+
     while (helpWindow.isOpen()) {
         sf::Event helpEvent;
         while (helpWindow.pollEvent(helpEvent)) {
             if (helpEvent.type == sf::Event::Closed) {
                 helpWindow.close();
+            }
+            if (helpEvent.type == sf::Event::TextEntered) {
+                if (helpEvent.text.unicode <= 122 && helpEvent.text.unicode >= 33 && name.size() < 10) {
+                    name += static_cast<char>(helpEvent.text.unicode);
+                }
+                if (helpEvent.text.unicode == 8) {
+                    if (name.size() != 0) {
+                        name = name.substr(0, name.size() - 1);
+                    }
+                }
+                playerName.setString(name);
+                playerName.setPosition((375 - playerName.getGlobalBounds().width) / 2.0f, 250);
+            }
+            if (btnEnviar.getGlobalBounds().contains(sf::Vector2f(sf::Mouse().getPosition(helpWindow).x, sf::Mouse().getPosition(helpWindow).y))) {
+                if (helpEvent.type == sf::Event::MouseButtonReleased) {
+                    if (helpEvent.mouseButton.button == sf::Mouse::Left) {
+                        //Enviardatos
+                    }
+                }
+                if (sf::Mouse().isButtonPressed(sf::Mouse::Left)) {
+                    btnEnviar.setFillColor(sf::Color(26, 66, 32, 255));
+                }
+                else {
+                    btnEnviar.setFillColor(sf::Color(73, 123, 85, 255));
+                }
+            }
+            else {
+                btnEnviar.setFillColor(sf::Color::Transparent);
             }
         }
         helpWindow.clear(sf::Color(118, 178, 146, 255));
@@ -1043,6 +1103,13 @@ void WinnerWindow() {
         helpWindow.draw(poker);
         helpWindow.draw(poker2);
         helpWindow.draw(infoTextTitulo);
+        helpWindow.draw(nickname);
+        helpWindow.draw(playerName);
+        helpWindow.draw(line);
+        helpWindow.draw(score);
+        helpWindow.draw(titleSscore);
+        helpWindow.draw(btnEnviar);
+        helpWindow.draw(txtEnviar);
         helpWindow.display();
     }
 }
@@ -1198,13 +1265,6 @@ void MainWindow() {
     icon.loadFromFile("./iconCard.png");
     mainWindow.create(sf::VideoMode(600, 600), "Solitaire Menu", sf::Style::Close);
     mainWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-    sf::RectangleShape playerBox = MakeTxtBox(200, 30, 200, 170);
-    playerBox.setFillColor(sf::Color(186, 243, 247, 255));
-    playerName.setCharacterSize(30);
-    playerName.setString("Player");
-    playerName.setPosition(267.5f, 163);
-    playerName.setFont(letra);
-    string name = "";
     sf::Text tittle;
     tittle.setFont(letra);
     tittle.setCharacterSize(100);
@@ -1303,18 +1363,7 @@ void MainWindow() {
                 exitRect.setFillColor(sf::Color::Transparent);
                 txtExit.setFillColor(sf::Color::Transparent);
             }
-            if (evnt.type == sf::Event::TextEntered) {
-                if (evnt.text.unicode <= 122 && evnt.text.unicode >= 33 && name.size() < 10) {
-                    name += static_cast<char>(evnt.text.unicode);
-                }
-                if (evnt.text.unicode == 8) {
-                    if (name.size() != 0) {
-                        name = name.substr(0, name.size() - 1);
-                    }
-                }
-                playerName.setString(name);
-                playerName.setPosition((600 - playerName.getGlobalBounds().width) / 2.0f, 163);
-            }
+            
         }
         mainWindow.clear(sf::Color(15, 185, 74, 255));
         mainWindow.draw(btnPlay);
@@ -1325,8 +1374,6 @@ void MainWindow() {
         mainWindow.draw(exitRect);
         mainWindow.draw(exit);
         mainWindow.draw(txtExit);
-        mainWindow.draw(playerBox);
-        mainWindow.draw(playerName);
         mainWindow.display();
     }
 }
