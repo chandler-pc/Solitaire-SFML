@@ -1,11 +1,14 @@
 //Para una óptima visualización se recomienda una pantalla de al menos 850 pixeles de altura
+//Para corre el código se necesita la librería SFML y de OpenSSLv1.1
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
 #include <sstream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "json.hpp"
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#include "httplib.h"
+
 using namespace std;
 //Constantes:
 const int N_Cartas = 52;
@@ -1061,8 +1064,8 @@ void WinnerWindow() {
     txtEnviar.setString("Enviar");
     txtEnviar.setCharacterSize(30);
     txtEnviar.setPosition(385, 322);
-    
-
+    bool oneTime = true;
+    sf::Text webText;
     while (helpWindow.isOpen()) {
         sf::Event helpEvent;
         while (helpWindow.pollEvent(helpEvent)) {
@@ -1083,8 +1086,20 @@ void WinnerWindow() {
             }
             if (btnEnviar.getGlobalBounds().contains(sf::Vector2f(sf::Mouse().getPosition(helpWindow).x, sf::Mouse().getPosition(helpWindow).y))) {
                 if (helpEvent.type == sf::Event::MouseButtonReleased) {
-                    if (helpEvent.mouseButton.button == sf::Mouse::Left) {
-                        //Enviardatos
+                    if (helpEvent.mouseButton.button == sf::Mouse::Left && oneTime && name!="") {
+                        httplib::Client cli("https://solitarieback.jeedx.repl.co");
+                        string s = "name=" + name + "&score=" + to_string(totalSec);
+                        auto res = cli.Post("/sendScore", s, "application/x-www-form-urlencoded");
+                        if (res) {
+                            if (res->status == 200) {
+                                oneTime = false;
+                                webText.setFont(letra);
+                                webText.setFillColor(sf::Color::Red);
+                                webText.setCharacterSize(22);
+                                webText.setString("Puedes ves tu tiempo en https://solitarieback.jeedx.repl.co");
+                                webText.setPosition(18, 375);
+                            }
+                        }
                     }
                 }
                 if (sf::Mouse().isButtonPressed(sf::Mouse::Left)) {
@@ -1100,6 +1115,7 @@ void WinnerWindow() {
         }
         helpWindow.clear(sf::Color(118, 178, 146, 255));
         helpWindow.draw(winner);
+        helpWindow.draw(webText);
         helpWindow.draw(poker);
         helpWindow.draw(poker2);
         helpWindow.draw(infoTextTitulo);
